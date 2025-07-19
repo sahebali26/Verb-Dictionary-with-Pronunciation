@@ -7,7 +7,7 @@
   <style>
     /* General Styles */
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
       padding: 0;
       transition: background-color 0.3s, color 0.3s;
@@ -17,10 +17,66 @@
       margin: 0 auto;
       padding: 20px;
     }
-    h1 {
-      text-align: center;
-      font-size: 2em;
+
+    /* Header Styles */
+    .header {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #007bff, #00d4ff);
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       margin-bottom: 20px;
+      animation: slideIn 0.5s ease-in-out;
+    }
+    h1 {
+      font-size: 2em;
+      margin: 0;
+      color: white;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      font-weight: 600;
+    }
+    select {
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      background-color: rgba(255, 255, 255, 0.9);
+      transition: background-color 0.3s, transform 0.2s;
+      width: 100%;
+      max-width: 200px;
+    }
+    select:hover {
+      background-color: #fff;
+      transform: scale(1.05);
+    }
+    button.theme-toggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button.theme-toggle:hover {
+      background-color: #fff;
+      transform: scale(1.1);
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Theme Styles */
@@ -30,38 +86,39 @@
     }
     body.dark {
       background-color: #222;
-      color: #f4f4f9;
+      color: #e0e0e0;
     }
     body.dark .tab-content {
-      background-color: #333;
+      background-color: #2a2a2a;
     }
     body.dark input, body.dark select {
       background-color: #444;
-      color: #fff;
+      color: #e0e0e0;
       border: 1px solid #666;
     }
     body.dark table {
-      background-color: #333;
-      color: #f4f4f9;
+      background-color: #2a2a2a;
+      color: #e0e0e0;
     }
     body.dark th, body.dark td {
       border: 1px solid #666;
+      color: #e0e0e0;
     }
-
-    /* Header and Controls */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
+    body.dark th {
+      background-color: #1a3c6e;
     }
-    select, button {
-      padding: 8px;
-      font-size: 1em;
-      border-radius: 5px;
-      cursor: pointer;
+    body.dark tr:nth-child(even) {
+      background-color: #333;
+    }
+    body.dark .header {
+      background: linear-gradient(135deg, #1a3c6e, #4a90e2);
+    }
+    body.dark select, body.dark button.theme-toggle {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: #e0e0e0;
+    }
+    body.dark select:hover, body.dark button.theme-toggle:hover {
+      background-color: rgba(255, 255, 255, 0.3);
     }
 
     /* Tabs */
@@ -87,6 +144,15 @@
     }
     .tab:hover {
       background-color: #bbb;
+    }
+    body.dark .tab {
+      background-color: #444;
+    }
+    body.dark .tab:hover {
+      background-color: #555;
+    }
+    body.dark .tab.active {
+      background-color: #4a90e2;
     }
 
     /* Tab Content */
@@ -116,6 +182,7 @@
       padding: 10px;
       text-align: left;
       border: 1px solid #ddd;
+      color: #333;
     }
     th {
       background-color: #007bff;
@@ -148,7 +215,23 @@
     /* Responsive Design */
     @media (max-width: 600px) {
       h1 { font-size: 1.5em; }
-      .header { flex-direction: column; align-items: flex-start; }
+      .header { 
+        flex-direction: column; 
+        align-items: center; 
+        padding: 10px;
+      }
+      select { 
+        width: 100%; 
+        max-width: 200px; 
+        margin: 5px 0; 
+      }
+      button.theme-toggle { 
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 1em;
+      }
       .tabs { 
         flex-direction: row;
         overflow-x: auto;
@@ -180,15 +263,15 @@
 
 <body class="light">
   <div class="container">
-    <h1>Verb Dictionary App</h1>
     <div class="header">
+      <h1>Verb Dictionary App</h1>
       <select id="language">
         <option value="en">English + Hindi + Assamese</option>
         <option value="en-only">English Only</option>
         <option value="en-hi">English + Hindi</option>
         <option value="en-as">English + Assamese</option>
       </select>
-      <button onclick="toggleTheme()">Toggle Theme</button>
+      <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </div>
     <div class="tabs">
       <div class="tab active" onclick="showTab('verbs')">Verbs (A–Z) with Meanings</div>
@@ -269,7 +352,7 @@
       { verb: "allow", past: "allowed", participle: "allowed", meaning: "to permit", hindi: "अनुमति देना", assamese: "অনুমতি দিয়া" },
       { verb: "ask", past: "asked", participle: "asked", meaning: "to inquire", hindi: "पूछना", assamese: "সোধা" },
       { verb: "become", past: "became", participle: "become", meaning: "to grow to be", hindi: "बनना", assamese: "হোৱা" },
-      { verb: "begin", past: "began", participle: "begun", meaning: "to start", hindi: "शुरू करना", assamese: "আৰম্ভ কৰা" },
+      { verb: "begin", past: "began", participle: "begun", meaning: "to start", hindiynia: "शुरू करना", assamese: "আৰম্ভ কৰা" },
       { verb: "believe", past: "believed", participle: "believed", meaning: "to accept as true", hindi: "विश्वास करना", assamese: "বিশ্বাস কৰা" },
       { verb: "break", past: "broke", participle: "broken", meaning: "to smash or split", hindi: "तोड़ना", assamese: "ভঙা" },
       { verb: "bring", past: "brought", participle: "brought", meaning: "to carry along", hindi: "लाना", assamese: "আনা" },
@@ -299,6 +382,7 @@
       currentTheme = currentTheme === 'light' ? 'dark' : 'light';
       document.body.className = currentTheme;
       localStorage.setItem('theme', currentTheme);
+      document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
     }
 
     // Tab Switching
@@ -445,6 +529,7 @@
 
     // Initial Render
     renderTables();
+    document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
   </script>
 </body>
 </html>
