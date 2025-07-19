@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verb Dictionary App</title>
+  <title>Verb Dictionary with Pronunciation</title>
   <style>
     /* General Styles */
     body {
@@ -23,7 +23,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
       background: linear-gradient(135deg, #007bff, #00d4ff);
       padding: 15px 20px;
@@ -214,11 +214,13 @@
 
     /* Responsive Design */
     @media (max-width: 600px) {
-      h1 { font-size: 1.5em; }
       .header { 
-        flex-direction: column; 
         align-items: center; 
         padding: 10px;
+      }
+      h1 { 
+        font-size: 1.5em; 
+        text-align: center;
       }
       select { 
         width: 100%; 
@@ -244,6 +246,14 @@
       table { font-size: 0.8em; }
       th, td { padding: 8px; }
       .action-btn { font-size: 1em; }
+    }
+    @media (min-width: 601px) {
+      .header {
+        align-items: flex-start;
+      }
+      h1 {
+        text-align: left;
+      }
     }
   </style>
 </head>
