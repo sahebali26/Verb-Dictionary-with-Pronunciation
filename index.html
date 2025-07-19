@@ -6,7 +6,7 @@
   <title>Verb Dictionary & Pronunciation</title>
   <style>
     /* General Styles */
-     body {
+    body {
       font-family: 'Segoe UI', Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -88,7 +88,7 @@
       background-color: #222;
       color: #e0e0e0;
     }
-    body.dark .tab-content {
+    body.dark .tab-content, body.dark .section {
       background-color: #2a2a2a;
     }
     body.dark input, body.dark select {
@@ -173,6 +173,47 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Section Styles for Mobile */
+    .section {
+      background-color: white;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .section-header {
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    body.dark .section-header {
+      color: #e0e0e0;
+    }
+    .section-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #fafafa;
+    }
+    body.dark .section-item {
+      border-bottom: 1px solid #666;
+      background-color: #333;
+    }
+    .section-item span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9em;
+    }
+    .section-item .action-btn {
+      cursor: pointer;
+      font-size: 1em;
+    }
+
     /* Table Styles */
     .table-container {
       overflow-x: auto;
@@ -220,6 +261,11 @@
       border: 1px solid #ddd;
       font-size: 0.9em;
     }
+    .save-verb-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
     .save-verb-container button {
       padding: 8px 15px;
       font-size: 0.9em;
@@ -228,7 +274,6 @@
       background-color: #007bff;
       color: white;
       cursor: pointer;
-      margin-left: 10px;
     }
     .save-verb-container button:hover {
       background-color: #0056b3;
@@ -263,30 +308,44 @@
       }
       .tabs { 
         gap: 5px;
-        padding-bottom: 8px;
+        padding: 8px;
+        background-color: #f4f4f9;
+        border-radius: 5px;
+        justify-content: space-around;
+      }
+      body.dark .tabs {
+        background-color: #2a2a2a;
       }
       .tab { 
         font-size: 0.85em;
-        padding: 6px 12px;
+        padding: 8px 12px;
+        flex: 1;
+        text-align: center;
+        border-radius: 5px;
+        touch-action: manipulation;
       }
       .tab-content {
         padding: 10px;
       }
-      table { 
-        font-size: 0.8em; 
+      .table-container {
+        display: none;
       }
-      th, td { 
-        padding: 6px; 
-      }
-      .action-btn { 
-        font-size: 0.9em; 
+      .section {
+        display: block;
       }
       input[type="text"] {
-        max-width: 200px;
+        max-width: 100%;
+        box-sizing: border-box;
+      }
+      .save-verb-container {
+        flex-direction: column;
+        align-items: stretch;
       }
       .save-verb-container button {
         font-size: 0.85em;
-        padding: 6px 12px;
+        padding: 8px;
+        width: 100%;
+        max-width: 100%;
       }
     }
     @media (min-width: 601px) {
@@ -296,23 +355,15 @@
       h1 {
         text-align: left;
       }
+      .section {
+        display: none;
+      }
+      .table-container {
+        display: block;
+      }
     }
   </style>
 </head>
-
-
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icon-192.png">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').then(() => {
-      console.log('Service Worker Registered');
-    });
-  }
-</script>
-
-
-
 <body class="light">
   <div class="container">
     <div class="header">
@@ -326,73 +377,87 @@
       <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="showTab('verbs')">Verbs (A–Z) with Meanings</div>
+      <div class="tab active" onclick="showTab('verbs')">Verbs (A–Z)</div>
       <div class="tab" onclick="showTab('forms')">Verb Forms</div>
-      <div class="tab" onclick="showTab('starred')">Star Marked Verbs</div>
+      <div class="tab" onclick="showTab('starred')">Starred Verbs</div>
       <div class="tab" onclick="showTab('saved')">Saved Verbs</div>
     </div>
     <div id="verbs" class="tab-content">
       <input type="text" id="search-verbs" class="search-bar" placeholder="Search verbs...">
-      <table id="verbs-table">
-        <thead>
-          <tr>
-            <th>Verb</th>
-            <th>Meaning</th>
-            <th>Hindi</th>
-            <th>Assamese</th>
-            <th>🔊</th>
-            <th>★</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-container">
+        <table id="verbs-table">
+          <thead>
+            <tr>
+              <th>Verb</th>
+              <th class="meaning-col">Meaning</th>
+              <th class="hindi-col">Hindi</th>
+              <th class="assamese-col">Assamese</th>
+              <th>🔊</th>
+              <th>★</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="section" id="verbs-section"></div>
     </div>
     <div id="forms" class="tab-content hidden">
       <input type="text" id="search-forms" class="search-bar" placeholder="Search verb forms...">
-      <table id="forms-table">
-        <thead>
-          <tr>
-            <th>Present</th>
-            <th>Past</th>
-            <th>Participle</th>
-            <th>🔊</th>
-            <th>★</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-container">
+        <table id="forms-table">
+          <thead>
+            <tr>
+              <th>Present</th>
+              <th>Past</th>
+              <th>Participle</th>
+              <th>🔊</th>
+              <th>★</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="section" id="forms-section"></div>
     </div>
     <div id="starred" class="tab-content hidden">
-      <table id="starred-table">
-        <thead>
-          <tr>
-            <th>Verb</th>
-            <th>Meaning</th>
-            <th>Hindi</th>
-            <th>Assamese</th>
-            <th>🔊</th>
-            <th>★</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-container">
+        <table id="starred-table">
+          <thead>
+            <tr>
+              <th>Verb</th>
+              <th class="meaning-col">Meaning</th>
+              <th class="hindi-col">Hindi</th>
+              <th class="assamese-col">Assamese</th>
+              <th>🔊</th>
+              <th>★</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="section" id="starred-section"></div>
     </div>
     <div id="saved" class="tab-content hidden">
-      <input type="text" id="save-verb" class="search-bar" placeholder="Enter verb to save...">
-      <button onclick="saveVerb()">Save Verb</button>
-      <table id="saved-table">
-        <thead>
-          <tr>
-            <th>Verb</th>
-            <th>Meaning</th>
-            <th>Hindi</th>
-            <th>Assamese</th>
-            <th>🔊</th>
-            <th>★</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="save-verb-container">
+        <input type="text" id="save-verb" class="search-bar" placeholder="Enter verb to save...">
+        <button onclick="saveVerb()">Save Verb</button>
+      </div>
+      <div class="table-container">
+        <table id="saved-table">
+          <thead>
+            <tr>
+              <th>Verb</th>
+              <th class="meaning-col">Meaning</th>
+              <th class="hindi-col">Hindi</th>
+              <th class="assamese-col">Assamese</th>
+              <th>🔊</th>
+              <th>★</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="section" id="saved-section"></div>
     </div>
   </div>
 
@@ -645,16 +710,18 @@
     let starredVerbs = JSON.parse(localStorage.getItem('starredVerbs')) || [];
     let savedVerbs = JSON.parse(localStorage.getItem('savedVerbs')) || [];
     let currentLanguage = localStorage.getItem('language') || 'en';
-    let currentTheme = localStorage.getItem('theme') || 'light';
 
     // Apply saved theme
+    let currentTheme = localStorage.getItem('theme') || 'light';
     document.body.className = currentTheme;
 
-    // Populate language dropdown
-    document.getElementById('language').value = currentLanguage;
-    document.getElementById('language').addEventListener('change', (e) => {
+    // Populate language dropdown and handle change
+    const languageSelect = document.getElementById('language');
+    languageSelect.value = currentLanguage;
+    languageSelect.addEventListener('change', (e) => {
       currentLanguage = e.target.value;
       localStorage.setItem('language', currentLanguage);
+      updateColumnVisibility();
       renderTables();
     });
 
@@ -666,6 +733,23 @@
       document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
     }
 
+    // Update column visibility based on language selection
+    function updateColumnVisibility() {
+      const meaningCols = document.querySelectorAll('.meaning-col');
+      const hindiCols = document.querySelectorAll('.hindi-col');
+      const assameseCols = document.querySelectorAll('.assamese-col');
+
+      meaningCols.forEach(col => {
+        col.style.display = currentLanguage === 'en-only' ? 'none' : '';
+      });
+      hindiCols.forEach(col => {
+        col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-as') ? 'none' : '';
+      });
+      assameseCols.forEach(col => {
+        col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-hi') ? 'none' : '';
+      });
+    }
+
     // Tab Switching
     function showTab(tabId) {
       document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
@@ -675,39 +759,58 @@
       renderTables();
     }
 
-    // Render Tables
+    // Render Tables and Sections
     function renderTables() {
       renderVerbsTable();
       renderFormsTable();
       renderStarredTable();
       renderSavedTable();
+      updateColumnVisibility();
     }
 
     // Render Verbs (A–Z) with Meanings
     function renderVerbsTable() {
       const tbody = document.querySelector('#verbs-table tbody');
+      const section = document.querySelector('#verbs-section');
       const search = document.getElementById('search-verbs').value.toLowerCase();
       tbody.innerHTML = '';
+      section.innerHTML = '<div class="section-header">Verbs (A–Z) with Meanings</div>';
       verbs.filter(v => v.verb.toLowerCase().includes(search)).forEach(v => {
+        // Table for desktop
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td class="meaning-col">${v.meaning}</td>
+          <td class="hindi-col">${v.hindi}</td>
+          <td class="assamese-col">${v.assamese}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
+        // Section for mobile
+        const item = document.createElement('div');
+        item.className = 'section-item';
+        item.innerHTML = `
+          <span><strong>Verb:</strong> ${v.verb}</span>
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+        `;
+        section.appendChild(item);
       });
     }
 
     // Render Verb Forms
     function renderFormsTable() {
       const tbody = document.querySelector('#forms-table tbody');
+      const section = document.querySelector('#forms-section');
       const search = document.getElementById('search-forms').value.toLowerCase();
       tbody.innerHTML = '';
+      section.innerHTML = '<div class="section-header">Verb Forms</div>';
       verbs.filter(v => v.verb.toLowerCase().includes(search)).forEach(v => {
+        // Table for desktop
         const row = document.createElement('tr');
         row.innerHTML = `
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</td>
@@ -717,42 +820,83 @@
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
+        // Section for mobile
+        const item = document.createElement('div');
+        item.className = 'section-item';
+        item.innerHTML = `
+          <span><strong>Present:</strong> <span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</span>
+          <span><strong>Past:</strong> <span class="action-btn" onclick="speak('${v.past}')">🔊</span>${v.past}</span>
+          <span><strong>Participle:</strong> <span class="action-btn" onclick="speak('${v.participle}')">🔊</span>${v.participle}</span>
+          <span><span class="action-btn" onclick="speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊 All</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+        `;
+        section.appendChild(item);
       });
     }
 
     // Render Starred Verbs
     function renderStarredTable() {
       const tbody = document.querySelector('#starred-table tbody');
+      const section = document.querySelector('#starred-section');
       tbody.innerHTML = '';
+      section.innerHTML = '<div class="section-header">Starred Verbs</div>';
       verbs.filter(v => starredVerbs.includes(v.verb)).forEach(v => {
+        // Table for desktop
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td class="meaning-col">${v.meaning}</td>
+          <td class="hindi-col">${v.hindi}</td>
+          <td class="assamese-col">${v.assamese}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
+        // Section for mobile
+        const item = document.createElement('div');
+        item.className = 'section-item';
+        item.innerHTML = `
+          <span><strong>Verb:</strong> ${v.verb}</span>
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></span>
+        `;
+        section.appendChild(item);
       });
     }
 
     // Render Saved Verbs
     function renderSavedTable() {
       const tbody = document.querySelector('#saved-table tbody');
+      const section = document.querySelector('#saved-section');
       tbody.innerHTML = '';
+      section.innerHTML = '<div class="section-header">Saved Verbs</div>';
       verbs.filter(v => savedVerbs.includes(v.verb)).forEach(v => {
+        // Table for desktop
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
-          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td class="meaning-col">${v.meaning}</td>
+          <td class="hindi-col">${v.hindi}</td>
+          <td class="assamese-col">${v.assamese}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
+        // Section for mobile
+        const item = document.createElement('div');
+        item.className = 'section-item';
+        item.innerHTML = `
+          <span><strong>Verb:</strong> ${v.verb}</span>
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+        `;
+        section.appendChild(item);
       });
     }
 
