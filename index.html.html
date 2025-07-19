@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verb Dictionary App</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    /* Theme Styles */
+    body.light {
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    body.dark {
+      background-color: #222;
+      color: #f4f4f9;
+    }
+    body.dark .tab-content {
+      background-color: #333;
+    }
+    body.dark input, body.dark select {
+      background-color: #444;
+      color: #fff;
+      border: 1px solid #666;
+    }
+    body.dark table {
+      background-color: #333;
+      color: #f4f4f9;
+    }
+    body.dark th, body.dark td {
+      border: 1px solid #666;
+    }
+
+    /* Header and Controls */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    select, button {
+      padding: 8px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab {
+      padding: 10px 20px;
+      background-color: #ddd;
+      border-radius: 5px 5px 0 0;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      flex: 0 0 auto;
+    }
+    .tab.active {
+      background-color: #007bff;
+      color: white;
+    }
+    .tab:hover {
+      background-color: #bbb;
+    }
+
+    /* Tab Content */
+    .tab-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .tab-content.hidden {
+      display: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background-color: white;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .action-btn {
+      cursor: pointer;
+      font-size: 1.2em;
+      margin-right: 10px;
+    }
+    .starred {
+      color: gold;
+    }
+
+    /* Search Bar */
+    .search-bar {
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 100%;
+      max-width: 300px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.5em; }
+      .header { flex-direction: column; align-items: flex-start; }
+      .tabs { 
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+      }
+      .tab { 
+        font-size: 0.9em;
+        padding: 8px 15px;
+      }
+      table { font-size: 0.8em; }
+      th, td { padding: 8px; }
+      .action-btn { font-size: 1em; }
+    }
+  </style>
+</head>
+
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(() => {
+      console.log('Service Worker Registered');
+    });
+  }
+</script>
+
+
+
+<body class="light">
+  <div class="container">
+    <h1>Verb Dictionary App</h1>
+    <div class="header">
+      <select id="language">
+        <option value="en">English + Hindi + Assamese</option>
+        <option value="en-only">English Only</option>
+        <option value="en-hi">English + Hindi</option>
+        <option value="en-as">English + Assamese</option>
+      </select>
+      <button onclick="toggleTheme()">Toggle Theme</button>
+    </div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('verbs')">Verbs (A–Z) with Meanings</div>
+      <div class="tab" onclick="showTab('forms')">Verb Forms</div>
+      <div class="tab" onclick="showTab('starred')">Star Marked Verbs</div>
+      <div class="tab" onclick="showTab('saved')">Saved Verbs</div>
+    </div>
+    <div id="verbs" class="tab-content">
+      <input type="text" id="search-verbs" class="search-bar" placeholder="Search verbs...">
+      <table id="verbs-table">
+        <thead>
+          <tr>
+            <th>Verb</th>
+            <th>Meaning</th>
+            <th>Hindi</th>
+            <th>Assamese</th>
+            <th>🔊</th>
+            <th>★</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="forms" class="tab-content hidden">
+      <input type="text" id="search-forms" class="search-bar" placeholder="Search verb forms...">
+      <table id="forms-table">
+        <thead>
+          <tr>
+            <th>Present</th>
+            <th>Past</th>
+            <th>Participle</th>
+            <th>🔊</th>
+            <th>★</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="starred" class="tab-content hidden">
+      <table id="starred-table">
+        <thead>
+          <tr>
+            <th>Verb</th>
+            <th>Meaning</th>
+            <th>Hindi</th>
+            <th>Assamese</th>
+            <th>🔊</th>
+            <th>★</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="saved" class="tab-content hidden">
+      <input type="text" id="save-verb" class="search-bar" placeholder="Enter verb to save...">
+      <button onclick="saveVerb()">Save Verb</button>
+      <table id="saved-table">
+        <thead>
+          <tr>
+            <th>Verb</th>
+            <th>Meaning</th>
+            <th>Hindi</th>
+            <th>Assamese</th>
+            <th>🔊</th>
+            <th>★</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Verb Data (150+ verbs, abridged for brevity)
+    const verbs = [
+      { verb: "accept", past: "accepted", participle: "accepted", meaning: "to take or receive", hindi: "स्वीकार करना", assamese: "গ্ৰহণ কৰা" },
+      { verb: "add", past: "added", participle: "added", meaning: "to join or combine", hindi: "जोड़ना", assamese: "যোগ কৰা" },
+      { verb: "allow", past: "allowed", participle: "allowed", meaning: "to permit", hindi: "अनुमति देना", assamese: "অনুমতি দিয়া" },
+      { verb: "ask", past: "asked", participle: "asked", meaning: "to inquire", hindi: "पूछना", assamese: "সোধা" },
+      { verb: "become", past: "became", participle: "become", meaning: "to grow to be", hindi: "बनना", assamese: "হোৱা" },
+      { verb: "begin", past: "began", participle: "begun", meaning: "to start", hindi: "शुरू करना", assamese: "আৰম্ভ কৰা" },
+      { verb: "believe", past: "believed", participle: "believed", meaning: "to accept as true", hindi: "विश्वास करना", assamese: "বিশ্বাস কৰা" },
+      { verb: "break", past: "broke", participle: "broken", meaning: "to smash or split", hindi: "तोड़ना", assamese: "ভঙা" },
+      { verb: "bring", past: "brought", participle: "brought", meaning: "to carry along", hindi: "लाना", assamese: "আনা" },
+      { verb: "build", past: "built", participle: "built", meaning: "to construct", hindi: "निर्माण करना", assamese: "নিৰ্মাণ কৰা" },
+      // Add more verbs to reach 150+ (abridged for brevity)
+    ];
+
+    // Initialize localStorage
+    let starredVerbs = JSON.parse(localStorage.getItem('starredVerbs')) || [];
+    let savedVerbs = JSON.parse(localStorage.getItem('savedVerbs')) || [];
+    let currentLanguage = localStorage.getItem('language') || 'en';
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    // Apply saved theme
+    document.body.className = currentTheme;
+
+    // Populate language dropdown
+    document.getElementById('language').value = currentLanguage;
+    document.getElementById('language').addEventListener('change', (e) => {
+      currentLanguage = e.target.value;
+      localStorage.setItem('language', currentLanguage);
+      renderTables();
+    });
+
+    // Theme Toggle
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.body.className = currentTheme;
+      localStorage.setItem('theme', currentTheme);
+    }
+
+    // Tab Switching
+    function showTab(tabId) {
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(tabId).classList.remove('hidden');
+      renderTables();
+    }
+
+    // Render Tables
+    function renderTables() {
+      renderVerbsTable();
+      renderFormsTable();
+      renderStarredTable();
+      renderSavedTable();
+    }
+
+    // Render Verbs (A–Z) with Meanings
+    function renderVerbsTable() {
+      const tbody = document.querySelector('#verbs-table tbody');
+      const search = document.getElementById('search-verbs').value.toLowerCase();
+      tbody.innerHTML = '';
+      verbs.filter(v => v.verb.toLowerCase().includes(search)).forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${v.verb}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Render Verb Forms
+    function renderFormsTable() {
+      const tbody = document.querySelector('#forms-table tbody');
+      const search = document.getElementById('search-forms').value.toLowerCase();
+      tbody.innerHTML = '';
+      verbs.filter(v => v.verb.toLowerCase().includes(search)).forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</td>
+          <td><span class="action-btn" onclick="speak('${v.past}')">🔊</span>${v.past}</td>
+          <td><span class="action-btn" onclick="speak('${v.participle}')">🔊</span>${v.participle}</td>
+          <td><span class="action-btn" onclick="speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Render Starred Verbs
+    function renderStarredTable() {
+      const tbody = document.querySelector('#starred-table tbody');
+      tbody.innerHTML = '';
+      verbs.filter(v => starredVerbs.includes(v.verb)).forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${v.verb}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Render Saved Verbs
+    function renderSavedTable() {
+      const tbody = document.querySelector('#saved-table tbody');
+      tbody.innerHTML = '';
+      verbs.filter(v => savedVerbs.includes(v.verb)).forEach(v => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${v.verb}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.meaning}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? 'hidden' : ''}">${v.hindi}</td>
+          <td class="${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? 'hidden' : ''}">${v.assamese}</td>
+          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Text-to-Speech for single word
+    function speak(text) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      window.speechSynthesis.speak(utterance);
+    }
+
+    // Text-to-Speech for all verb forms
+    function speakAllForms(present, past, participle) {
+      const forms = [present, past, participle];
+      let index = 0;
+
+      function speakNext() {
+        if (index < forms.length) {
+          const utterance = new SpeechSynthesisUtterance(forms[index]);
+          utterance.lang = 'en-US';
+          utterance.onend = () => {
+            index++;
+            speakNext();
+          };
+          window.speechSynthesis.speak(utterance);
+        }
+      }
+      speakNext();
+    }
+
+    // Toggle Star
+    function toggleStar(verb) {
+      if (starredVerbs.includes(verb)) {
+        starredVerbs = starredVerbs.filter(v => v !== verb);
+      } else {
+        starredVerbs.push(verb);
+      }
+      localStorage.setItem('starredVerbs', JSON.stringify(starredVerbs));
+      renderTables();
+    }
+
+    // Save Verb
+    function saveVerb() {
+      const verb = document.getElementById('save-verb').value.trim().toLowerCase();
+      if (verb && verbs.some(v => v.verb === verb) && !savedVerbs.includes(verb)) {
+        savedVerbs.push(verb);
+        localStorage.setItem('savedVerbs', JSON.stringify(savedVerbs));
+        document.getElementById('save-verb').value = '';
+        renderSavedTable();
+      }
+    }
+
+    // Event Listeners for Search
+    document.getElementById('search-verbs').addEventListener('input', renderVerbsTable);
+    document.getElementById('search-forms').addEventListener('input', renderFormsTable);
+
+    // Initial Render
+    renderTables();
+  </script>
+</body>
+</html>
