@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Verb Dictionary & Pronunciation</title>
+  <title>Verb Dictionary</title>
   <style>
     /* General Styles */
     body {
@@ -15,10 +15,8 @@
     .container {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 10px 10px 60px 10px; /* Padding-bottom for fixed footer */
+      padding: 10px 10px 80px 10px;
     }
-
-    /* Header Styles */
     .header {
       position: sticky;
       top: 0;
@@ -80,8 +78,6 @@
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Theme Styles */
     body.light {
       background-color: #f4f4f9;
       color: #333;
@@ -122,8 +118,6 @@
     body.dark select:hover, body.dark button.theme-toggle:hover {
       background-color: rgba(255, 255, 255, 0.3);
     }
-
-    /* Tabs */
     .tabs {
       position: sticky;
       top: 110px;
@@ -167,8 +161,6 @@
     body.dark .tab.active {
       background-color: #4a90e2;
     }
-
-    /* Search Section (Desktop) */
     .search-section {
       display: flex;
       align-items: center;
@@ -216,8 +208,6 @@
     body.dark .error-message {
       color: #ef5350;
     }
-
-    /* Tab Content */
     .tab-content {
       background-color: white;
       padding: 15px;
@@ -232,8 +222,6 @@
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Section Styles for Mobile */
     .section {
       background-color: white;
       padding: 12px;
@@ -328,8 +316,6 @@
     body.dark button.search-toggle:hover {
       background-color: #357abd;
     }
-
-    /* Table Styles */
     .table-container {
       overflow-x: auto;
       overflow-y: auto;
@@ -367,8 +353,25 @@
     .starred {
       color: gold;
     }
-
-    /* Save Verb Container */
+    .translate-btn {
+      font-size: 0.8em;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .translate-btn:hover {
+      background-color: #218838;
+    }
+    body.dark .translate-btn {
+      background-color: #2ecc71;
+    }
+    body.dark .translate-btn:hover {
+      background-color: #27ae60;
+    }
     .save-verb-container {
       margin-bottom: 15px;
       display: flex;
@@ -393,8 +396,6 @@
     body.dark .save-verb-container button:hover {
       background-color: #357abd;
     }
-
-    /* Footer Styles */
     footer {
       position: fixed;
       bottom: 0;
@@ -412,11 +413,9 @@
       background-color: #2a2a2a;
       color: #e0e0e0;
     }
-
-    /* Responsive Design */
     @media (max-width: 600px) {
       .container {
-        padding-bottom: 80px; /* Increased for fixed footer on mobile */
+        padding-bottom: 80px;
       }
       .header {
         align-items: center;
@@ -462,7 +461,7 @@
         touch-action: manipulation;
       }
       .search-section {
-        display: none; /* Hidden on mobile */
+        display: none;
       }
       .tab-content {
         padding: 10px;
@@ -502,7 +501,7 @@
         display: block;
       }
       .sticky-section-header {
-        display: none; /* Hidden on desktop */
+        display: none;
       }
     }
   </style>
@@ -528,12 +527,12 @@
       </div>
       <div class="search-section">
         <div id="verbs-search" class="search-container">
-          <input type="text" id="search-verbs" placeholder="Search verbs...">
+          <input type="text" id="search-verbs" placeholder="Search verbs..." onkeypress="if(event.keyCode===13)searchVerbs()">
           <button onclick="searchVerbs()">Search</button>
           <div id="verbs-error" class="error-message"></div>
         </div>
         <div id="forms-search" class="search-container hidden">
-          <input type="text" id="search-forms" placeholder="Search verb forms...">
+          <input type="text" id="search-forms" placeholder="Search verb forms..." onkeypress="if(event.keyCode===13)searchForms()">
           <button onclick="searchForms()">Search</button>
           <div id="forms-error" class="error-message"></div>
         </div>
@@ -544,7 +543,7 @@
         <div class="sticky-section-header">
           <div class="section-header">Verbs (A–Z) with Meanings <button class="search-toggle" onclick="toggleSearch('verbs')">🔍</button></div>
           <div id="verbs-section-search" class="section-search-container">
-            <input type="text" id="search-verbs-mobile" placeholder="Search verbs...">
+            <input type="text" id="search-verbs-mobile" placeholder="Search verbs..." onkeypress="if(event.keyCode===13)searchVerbs()">
             <button onclick="searchVerbs()">Search</button>
             <div id="verbs-error-mobile" class="error-message"></div>
           </div>
@@ -572,7 +571,7 @@
         <div class="sticky-section-header">
           <div class="section-header">Verb Forms <button class="search-toggle" onclick="toggleSearch('forms')">🔍</button></div>
           <div id="forms-section-search" class="section-search-container">
-            <input type="text" id="search-forms-mobile" placeholder="Search verb forms...">
+            <input type="text" id="search-forms-mobile" placeholder="Search verb forms..." onkeypress="if(event.keyCode===13)searchForms()">
             <button onclick="searchForms()">Search</button>
             <div id="forms-error-mobile" class="error-message"></div>
           </div>
@@ -599,7 +598,7 @@
         <div class="sticky-section-header">
           <div class="section-header">Starred Verbs <button class="search-toggle" onclick="toggleSearch('starred')">🔍</button></div>
           <div id="starred-section-search" class="section-search-container">
-            <input type="text" id="search-starred-mobile" placeholder="Search starred verbs...">
+            <input type="text" id="search-starred-mobile" placeholder="Search starred verbs..." onkeypress="if(event.keyCode===13)searchStarred()">
             <button onclick="searchStarred()">Search</button>
             <div id="starred-error-mobile" class="error-message"></div>
           </div>
@@ -624,7 +623,7 @@
     </div>
     <div id="saved" class="tab-content hidden">
       <div class="save-verb-container">
-        <input type="text" id="save-verb" placeholder="Enter verb to save...">
+        <input type="text" id="save-verb" placeholder="Enter verb to save..." onkeypress="if(event.keyCode===13)saveVerb()">
         <button onclick="saveVerb()">Save Verb</button>
         <div id="save-error" class="error-message"></div>
       </div>
@@ -632,7 +631,7 @@
         <div class="sticky-section-header">
           <div class="section-header">Saved Verbs <button class="search-toggle" onclick="toggleSearch('saved')">🔍</button></div>
           <div id="saved-section-search" class="section-search-container">
-            <input type="text" id="search-saved-mobile" placeholder="Search saved verbs...">
+            <input type="text" id="search-saved-mobile" placeholder="Search saved verbs..." onkeypress="if(event.keyCode===13)searchSaved()">
             <button onclick="searchSaved()">Search</button>
             <div id="saved-error-mobile" class="error-message"></div>
           </div>
@@ -655,11 +654,10 @@
         </table>
       </div>
     </div>
-    <footer> &copy; All rights reserved Saheb Ali</footer>
+    <footer>© All rights reserved Saheb Ali</footer>
   </div>
-
   <script>
-    // Verb Data (150+ verbs, abridged for brevity)
+    // Unified Verb Data
     const verbs = [
 
   { verb: "arise", past: "arose", participle: "arisen", meaning: "to come up", hindi: "उठना", assamese: "উঠা" },
@@ -941,7 +939,7 @@
   { verb: "write", past: "wrote", participle: "written", meaning: "to compose", hindi: "लिखना", assamese: "লিখা" },
   { verb: "yell", past: "yelled", participle: "yelled", meaning: "to shout loudly", hindi: "चिल्लाना", assamese: "চিঞৰা" }
 ]
-   // Initialize localStorage
+ // Initialize localStorage
     let starredVerbs = JSON.parse(localStorage.getItem('starredVerbs')) || [];
     let savedVerbs = JSON.parse(localStorage.getItem('savedVerbs')) || [];
     let fetchedVerbs = JSON.parse(localStorage.getItem('fetchedVerbs')) || [];
@@ -952,7 +950,7 @@
     document.body.className = currentTheme;
     document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
 
-    // Populate language dropdown and handle change
+    // Populate language dropdown
     const languageSelect = document.getElementById('language');
     languageSelect.value = currentLanguage;
     languageSelect.addEventListener('change', (e) => {
@@ -970,32 +968,54 @@
       document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
     }
 
-    // Update column visibility based on language selection
+    // Update column visibility
     function updateColumnVisibility() {
       const meaningCols = document.querySelectorAll('.meaning-col');
       const hindiCols = document.querySelectorAll('.hindi-col');
       const assameseCols = document.querySelectorAll('.assamese-col');
-
-      meaningCols.forEach(col => {
-        col.style.display = currentLanguage === 'en-only' ? 'none' : '';
-      });
-      hindiCols.forEach(col => {
-        col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-as') ? 'none' : '';
-      });
-      assameseCols.forEach(col => {
-        col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-hi') ? 'none' : '';
-      });
+      meaningCols.forEach(col => col.style.display = currentLanguage === 'en-only' ? 'none' : '');
+      hindiCols.forEach(col => col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-as') ? 'none' : '');
+      assameseCols.forEach(col => col.style.display = (currentLanguage === 'en-only' || currentLanguage === 'en-hi') ? 'none' : '');
     }
 
-    // Fetch verb from online source (DictionaryAPI.dev)
+    // Get verb forms
+    function getVerbForms(verb) {
+      // Check local verbs first
+      const localVerb = verbs.find(v => 
+        v.verb.toLowerCase() === verb.toLowerCase() ||
+        v.past.toLowerCase() === verb.toLowerCase() ||
+        v.participle.toLowerCase() === verb.toLowerCase()
+      );
+      if (localVerb) {
+        return {
+          base: localVerb.verb,
+          past: localVerb.past,
+          participle: localVerb.participle
+        };
+      }
+      // Check fetched verbs
+      const fetchedVerb = fetchedVerbs.find(v => 
+        v.verb.toLowerCase() === verb.toLowerCase() ||
+        v.past.toLowerCase() === verb.toLowerCase() ||
+        v.participle.toLowerCase() === verb.toLowerCase()
+      );
+      if (fetchedVerb) {
+        return {
+          base: fetchedVerb.verb,
+          past: fetchedVerb.past,
+          participle: fetchedVerb.participle
+        };
+      }
+      // Regular verb rule (for saving new verbs or temporary display)
+      const base = verb.toLowerCase();
+      const past = base.endsWith('e') ? `${base}d` : `${base}ed`;
+      return { base, past, participle: past };
+    }
+
+    // Fetch verb from DictionaryAPI.dev (for saving only)
     async function fetchVerb(verb, tab) {
       const errorElements = {
-        'verbs': document.getElementById('verbs-error'),
-        'forms': document.getElementById('forms-error'),
         'saved': document.getElementById('save-error'),
-        'verbs-mobile': document.getElementById('verbs-error-mobile'),
-        'forms-mobile': document.getElementById('forms-error-mobile'),
-        'starred-mobile': document.getElementById('starred-error-mobile'),
         'saved-mobile': document.getElementById('saved-error-mobile')
       };
 
@@ -1007,34 +1027,33 @@
         }
       };
 
+      const forms = getVerbForms(verb);
+      const baseVerb = forms.base;
+
       try {
-        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${verb}`);
-        if (!response.ok) {
-          throw new Error('Verb not found in online dictionary');
-        }
+        const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${baseVerb}`);
+        if (!response.ok) throw new Error('Verb not found in online dictionary');
         const data = await response.json();
         const entry = data[0];
-        if (!entry) {
-          throw new Error('No data returned for verb');
-        }
+        if (!entry) throw new Error('No data returned for verb');
 
-        // Extract meaning (prioritize verb definitions)
         let meaning = 'No definition available';
         const verbDefinition = entry.meanings.find(m => m.partOfSpeech === 'verb');
         if (verbDefinition && verbDefinition.definitions[0]) {
           meaning = verbDefinition.definitions[0].definition;
         }
 
-        // Placeholder for past and participle (basic conjugation logic)
-        const past = verb.endsWith('e') ? `${verb}d` : `${verb}ed`;
-        const participle = past;
+        const newVerb = {
+          verb: baseVerb,
+          past: forms.past,
+          participle: forms.participle,
+          meaning,
+          hindi: null,
+          assamese: null,
+          isFetched: true
+        };
 
-        // Placeholder for Hindi and Assamese translations
-        const hindi = `Hindi translation of ${verb}`;
-        const assamese = `Assamese translation of ${verb}`;
-
-        const newVerb = { verb, past, participle, meaning, hindi, assamese, isFetched: true };
-        if (!fetchedVerbs.some(v => v.verb === verb)) {
+        if (!fetchedVerbs.some(v => v.verb === baseVerb)) {
           fetchedVerbs.push(newVerb);
           localStorage.setItem('fetchedVerbs', JSON.stringify(fetchedVerbs));
         }
@@ -1045,7 +1064,7 @@
       }
     }
 
-    // Toggle Search Input on Mobile
+    // Toggle Search Input
     function toggleSearch(tabId) {
       const searchContainer = document.getElementById(`${tabId}-section-search`);
       searchContainer.classList.toggle('active');
@@ -1067,7 +1086,7 @@
       renderTables();
     }
 
-    // Render Tables and Sections
+    // Render Tables
     function renderTables() {
       renderVerbsTable();
       renderFormsTable();
@@ -1076,24 +1095,37 @@
       updateColumnVisibility();
     }
 
-    // Render Verbs (A–Z) with Meanings
-    async function renderVerbsTable(search = '') {
+    // Render Verbs (A–Z)
+    function renderVerbsTable(search = '') {
       const tbody = document.querySelector('#verbs-table tbody');
       const sectionContent = document.querySelector('#verbs-section .section-content');
       const errorElements = [document.getElementById('verbs-error'), document.getElementById('verbs-error-mobile')];
       tbody.innerHTML = '';
       sectionContent.innerHTML = '';
 
-      let displayVerbs = [...verbs, ...fetchedVerbs];
+      let displayVerbs = [];
       if (search) {
         search = search.toLowerCase();
-        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase().includes(search));
-        if (!displayVerbs.length && !verbs.some(v => v.verb === search) && !fetchedVerbs.some(v => v.verb === search)) {
-          const newVerb = await fetchVerb(search, window.innerWidth <= 600 ? 'verbs-mobile' : 'verbs');
-          if (newVerb) {
-            displayVerbs.push(newVerb);
-          }
+        const forms = getVerbForms(search);
+        const localVerb = verbs.find(v => v.verb.toLowerCase() === forms.base);
+        const fetchedVerb = fetchedVerbs.find(v => v.verb.toLowerCase() === forms.base);
+        if (localVerb) {
+          displayVerbs = [localVerb];
+        } else if (fetchedVerb) {
+          displayVerbs = [fetchedVerb];
+        } else {
+          displayVerbs = [{
+            verb: forms.base,
+            past: forms.past,
+            participle: forms.participle,
+            meaning: null,
+            hindi: null,
+            assamese: null,
+            isTemporary: true
+          }];
         }
+      } else {
+        displayVerbs = [...verbs, ...fetchedVerbs];
       }
 
       if (search && !displayVerbs.length) {
@@ -1105,25 +1137,30 @@
       }
 
       displayVerbs.forEach(v => {
-        // Table for desktop
+        const hasMeaning = v.meaning && v.meaning !== null;
+        const hasHindi = v.hindi && v.hindi !== null;
+        const hasAssamese = v.assamese && v.assamese !== null;
+        const meaningContent = hasMeaning ? v.meaning : `<a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(v.verb + ' meaning')}" target="_blank">Look up Meaning</a>`;
+        const hindiContent = hasHindi ? v.hindi : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=hi" target="_blank">Translate to Hindi</a>`;
+        const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="meaning-col">${v.meaning}</td>
-          <td class="hindi-col">${v.hindi}</td>
-          <td class="assamese-col">${v.assamese}</td>
+          <td class="meaning-col">${meaningContent}</td>
+          <td class="hindi-col">${hindiContent}</td>
+          <td class="assamese-col">${assameseContent}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
-        // Section for mobile
         const item = document.createElement('div');
         item.className = 'section-item';
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
-          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
           <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
           <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
         `;
@@ -1132,35 +1169,50 @@
     }
 
     // Render Verb Forms
-    async function renderFormsTable(search = '') {
+    function renderFormsTable(search = '') {
       const tbody = document.querySelector('#forms-table tbody');
       const sectionContent = document.querySelector('#forms-section .section-content');
       const errorElements = [document.getElementById('forms-error'), document.getElementById('forms-error-mobile')];
       tbody.innerHTML = '';
       sectionContent.innerHTML = '';
 
-      let displayVerbs = [...verbs, ...fetchedVerbs];
+      let displayVerbs = [];
       if (search) {
         search = search.toLowerCase();
-        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase().includes(search));
-        if (!displayVerbs.length && !verbs.some(v => v.verb === search) && !fetchedVerbs.some(v => v.verb === search)) {
-          const newVerb = await fetchVerb(search, window.innerWidth <= 600 ? 'forms-mobile' : 'forms');
-          if (newVerb) {
-            displayVerbs.push(newVerb);
-          }
+        const forms = getVerbForms(search);
+        const localVerb = verbs.find(v => v.verb.toLowerCase() === forms.base);
+        const fetchedVerb = fetchedVerbs.find(v => v.verb.toLowerCase() === forms.base);
+        if (localVerb) {
+          displayVerbs = [localVerb];
+        } else if (fetchedVerb) {
+          displayVerbs = [fetchedVerb];
+        } else {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td colspan="3"><a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(search + ' present past participle verb form')}" target="_blank">Look up Verb Forms</a></td>
+            <td></td>
+            <td></td>
+          `;
+          tbody.appendChild(row);
+          const item = document.createElement('div');
+          item.className = 'section-item';
+          item.innerHTML = `
+            <span><strong>Verb:</strong> ${search}</span>
+            <span><a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(search + ' present past participle verb form')}" target="_blank">Look up Verb Forms</a></span>
+          `;
+          sectionContent.appendChild(item);
+          errorElements.forEach(el => {
+            el.textContent = 'No verb forms found in local data';
+            el.style.display = 'block';
+            setTimeout(() => { el.style.display = 'none'; }, 3000);
+          });
+          return;
         }
-      }
-
-      if (search && !displayVerbs.length) {
-        errorElements.forEach(el => {
-          el.textContent = 'No verbs found';
-          el.style.display = 'block';
-          setTimeout(() => { el.style.display = 'none'; }, 3000);
-        });
+      } else {
+        displayVerbs = [...verbs, ...fetchedVerbs];
       }
 
       displayVerbs.forEach(v => {
-        // Table for desktop
         const row = document.createElement('tr');
         row.innerHTML = `
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</td>
@@ -1170,7 +1222,6 @@
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
-        // Section for mobile
         const item = document.createElement('div');
         item.className = 'section-item';
         item.innerHTML = `
@@ -1195,7 +1246,8 @@
       let displayVerbs = [...verbs, ...fetchedVerbs].filter(v => starredVerbs.includes(v.verb));
       if (search) {
         search = search.toLowerCase();
-        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase().includes(search));
+        const forms = getVerbForms(search);
+        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase() === forms.base);
       }
 
       if (search && !displayVerbs.length) {
@@ -1207,25 +1259,30 @@
       }
 
       displayVerbs.forEach(v => {
-        // Table for desktop
+        const hasMeaning = v.meaning && v.meaning !== null;
+        const hasHindi = v.hindi && v.hindi !== null;
+        const hasAssamese = v.assamese && v.assamese !== null;
+        const meaningContent = hasMeaning ? v.meaning : `<a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(v.verb + ' meaning')}" target="_blank">Look up Meaning</a>`;
+        const hindiContent = hasHindi ? v.hindi : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=hi" target="_blank">Translate to Hindi</a>`;
+        const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="meaning-col">${v.meaning}</td>
-          <td class="hindi-col">${v.hindi}</td>
-          <td class="assamese-col">${v.assamese}</td>
+          <td class="meaning-col">${meaningContent}</td>
+          <td class="hindi-col">${hindiContent}</td>
+          <td class="assamese-col">${assameseContent}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
-        // Section for mobile
         const item = document.createElement('div');
         item.className = 'section-item';
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
-          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
           <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
           <span><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></span>
         `;
@@ -1234,7 +1291,7 @@
     }
 
     // Render Saved Verbs
-    async function renderSavedTable(search = '') {
+    function renderSavedTable(search = '') {
       const tbody = document.querySelector('#saved-table tbody');
       const sectionContent = document.querySelector('#saved-section .section-content');
       const errorElements = [document.getElementById('save-error'), document.getElementById('saved-error-mobile')];
@@ -1244,13 +1301,8 @@
       let displayVerbs = [...verbs, ...fetchedVerbs].filter(v => savedVerbs.includes(v.verb));
       if (search) {
         search = search.toLowerCase();
-        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase().includes(search));
-        if (!displayVerbs.length && !verbs.some(v => v.verb === search) && !fetchedVerbs.some(v => v.verb === search)) {
-          const newVerb = await fetchVerb(search, window.innerWidth <= 600 ? 'saved-mobile' : 'saved');
-          if (newVerb && savedVerbs.includes(search)) {
-            displayVerbs.push(newVerb);
-          }
-        }
+        const forms = getVerbForms(search);
+        displayVerbs = displayVerbs.filter(v => v.verb.toLowerCase() === forms.base);
       }
 
       if (search && !displayVerbs.length) {
@@ -1262,25 +1314,30 @@
       }
 
       displayVerbs.forEach(v => {
-        // Table for desktop
+        const hasMeaning = v.meaning && v.meaning !== null;
+        const hasHindi = v.hindi && v.hindi !== null;
+        const hasAssamese = v.assamese && v.assamese !== null;
+        const meaningContent = hasMeaning ? v.meaning : `<a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(v.verb + ' meaning')}" target="_blank">Look up Meaning</a>`;
+        const hindiContent = hasHindi ? v.hindi : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=hi" target="_blank">Translate to Hindi</a>`;
+        const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
+
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${v.verb}</td>
-          <td class="meaning-col">${v.meaning}</td>
-          <td class="hindi-col">${v.hindi}</td>
-          <td class="assamese-col">${v.assamese}</td>
+          <td class="meaning-col">${meaningContent}</td>
+          <td class="hindi-col">${hindiContent}</td>
+          <td class="assamese-col">${assameseContent}</td>
           <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
           <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
-        // Section for mobile
         const item = document.createElement('div');
         item.className = 'section-item';
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
-          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${v.meaning}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${v.hindi}</span>`}
-          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${v.assamese}</span>`}
+          ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
+          ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
           <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
           <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
         `;
@@ -1301,6 +1358,7 @@
         });
         return;
       }
+      searchInput.value = ''; // Clear input
       renderVerbsTable(search);
     }
 
@@ -1316,6 +1374,7 @@
         });
         return;
       }
+      searchInput.value = ''; // Clear input
       renderFormsTable(search);
     }
 
@@ -1329,6 +1388,7 @@
         setTimeout(() => { errorElement.style.display = 'none'; }, 3000);
         return;
       }
+      searchInput.value = ''; // Clear input
       renderStarredTable(search);
     }
 
@@ -1344,21 +1404,20 @@
         });
         return;
       }
+      searchInput.value = ''; // Clear input
       renderSavedTable(search);
     }
 
-    // Text-to-Speech for single word
+    // Text-to-Speech
     function speak(text) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       window.speechSynthesis.speak(utterance);
     }
 
-    // Text-to-Speech for all verb forms
     function speakAllForms(present, past, participle) {
       const forms = [present, past, participle];
       let index = 0;
-
       function speakNext() {
         if (index < forms.length) {
           const utterance = new SpeechSynthesisUtterance(forms[index]);
@@ -1388,7 +1447,6 @@
     async function saveVerb() {
       const verb = document.getElementById('save-verb').value.trim().toLowerCase();
       const errorElements = [document.getElementById('save-error'), document.getElementById('saved-error-mobile')];
-      
       if (!verb) {
         errorElements.forEach(el => {
           el.textContent = 'Please enter a verb';
@@ -1397,7 +1455,6 @@
         });
         return;
       }
-
       if (savedVerbs.includes(verb)) {
         errorElements.forEach(el => {
           el.textContent = 'Verb already saved';
@@ -1406,16 +1463,22 @@
         });
         return;
       }
-
-      if (verbs.some(v => v.verb === verb) || fetchedVerbs.some(v => v.verb === verb)) {
-        savedVerbs.push(verb);
+      const forms = getVerbForms(verb);
+      const baseVerb = forms.base;
+      if (verbs.some(v => v.verb === baseVerb)) {
+        savedVerbs.push(baseVerb);
+        localStorage.setItem('savedVerbs', JSON.stringify(savedVerbs));
+        document.getElementById('save-verb').value = '';
+        renderSavedTable();
+      } else if (fetchedVerbs.some(v => v.verb === baseVerb)) {
+        savedVerbs.push(baseVerb);
         localStorage.setItem('savedVerbs', JSON.stringify(savedVerbs));
         document.getElementById('save-verb').value = '';
         renderSavedTable();
       } else {
         const newVerb = await fetchVerb(verb, window.innerWidth <= 600 ? 'saved-mobile' : 'saved');
         if (newVerb) {
-          savedVerbs.push(verb);
+          savedVerbs.push(baseVerb);
           localStorage.setItem('savedVerbs', JSON.stringify(savedVerbs));
           document.getElementById('save-verb').value = '';
           renderSavedTable();
