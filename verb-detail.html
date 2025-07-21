@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verb Details</title>
+  <script src="verbs.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body.light {
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    body.dark {
+      background-color: #222;
+      color: #e0e0e0;
+    }
+    body.dark .bg-white {
+      background-color: #2a2a2a;
+    }
+    body.dark .text-gray-800 {
+      color: #e0e0e0;
+    }
+    body.dark .bg-gray-100 {
+      background-color: #333;
+    }
+    body.dark .border-gray-200 {
+      border-color: #666;
+    }
+    body.dark .hover\:bg-gray-200:hover {
+      background-color: #444;
+    }
+    body.dark .bg-blue-600 {
+      background-color: #4a90e2;
+    }
+    body.dark .hover\:bg-blue-700:hover {
+      background-color: #357abd;
+    }
+    body.dark .bg-green-600 {
+      background-color: #2ecc71;
+    }
+    body.dark .hover\:bg-green-700:hover {
+      background-color: #27ae60;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="light">
+  <div class="container mx-auto px-4 py-6 max-w-4xl">
+    <!-- Header -->
+    <header class="sticky top-0 z-20 bg-gradient-to-r from-blue-500 to-cyan-500 p-4 rounded-lg shadow-lg mb-6 flex justify-between items-center animate-fade-in">
+      <h1 id="verb-title" class="text-xl md:text-2xl font-bold text-white capitalize"></h1>
+      <div class="flex items-center gap-4">
+        <select id="language" class="p-2 rounded-md bg-white bg-opacity-90 text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
+          <option value="en">English + Hindi + Assamese</option>
+          <option value="en-only">Verbs Only</option>
+          <option value="en-hi">English + Hindi</option>
+          <option value="en-as">English + Assamese</option>
+        </select>
+        <button class="theme-toggle w-10 h-10 rounded-full bg-white bg-opacity-90 flex items-center justify-center text-lg hover:bg-gray-200" onclick="toggleTheme()">🌙</button>
+      </div>
+    </header>
+
+    <!-- Verb Details -->
+    <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
+      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Verb Details</h2>
+      <div id="verb-meaning" class="mb-4 text-sm md:text-base"></div>
+      <h3 class="text-md md:text-lg font-semibold text-gray-800 mb-2">Verb Forms</h3>
+      <div class="flex justify-center mb-4">
+        <select id="form-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
+          <option value="0.5">Slow (0.5x)</option>
+          <option value="1.0" selected>Normal (1x)</option>
+          <option value="1.5">Fast (1.5x)</option>
+        </select>
+      </div>
+      <div class="space-y-4">
+        <div id="present-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+        <div id="past-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+        <div id="participle-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+      </div>
+      <div class="flex justify-center gap-4 mt-6">
+        <button id="speak-all" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Speak All Forms</button>
+      </div>
+    </div>
+
+    <!-- Write and Listen -->
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
+      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Write and Listen</h2>
+      <div class="flex flex-col md:flex-row gap-4 items-center">
+        <input type="text" id="custom-text" placeholder="Enter text or verb to listen..." class="w-full md:w-1/2 p-2 border border-gray-200 rounded-md text-sm">
+        <select id="speech-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
+          <option value="0.5">Slow (0.5x)</option>
+          <option value="1.0" selected>Normal (1x)</option>
+          <option value="1.5">Fast (1.5x)</option>
+        </select>
+        <button onclick="speakCustom()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Speak</button>
+      </div>
+      <div id="custom-error" class="text-red-500 text-sm mt-2 hidden"></div>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-6 flex justify-center">
+      <a href="index.html" class="bg-blue-600 text-white px-2 py-2 rounded-md hover:bg-blue-700">Back to Home</a>
+    </div>
+
+    <footer class="fixed bottom-0 w-full text-center py-4 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm">
+      © All rights reserved Saheb Ali
+    </footer>
+  </div>
+
+  <script>
+    // Initialize localStorage
+    let fetchedVerbs = JSON.parse(localStorage.getItem('fetchedVerbs')) || [];
+    let currentLanguage = localStorage.getItem('language') || 'en';
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    // Get query parameters
+    const params = new URLSearchParams(window.location.search);
+    const verb = params.get('verb') ? decodeURIComponent(params.get('verb')).toLowerCase() : '';
+
+    // Apply theme and language
+    document.body.className = currentTheme;
+    document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
+    document.getElementById('language').value = currentLanguage;
+
+    // Toggle Theme
+    function toggleTheme() {
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.body.className = currentTheme;
+      localStorage.setItem('theme', currentTheme);
+      document.querySelector('.theme-toggle').innerHTML = currentTheme === 'light' ? '🌙' : '☀️';
+    }
+
+    // Language Change
+    document.getElementById('language').addEventListener('change', (e) => {
+      currentLanguage = e.target.value;
+      localStorage.setItem('language', currentLanguage);
+      renderVerbDetails();
+    });
+
+    // Get verb forms and meanings
+    function getVerbForms(verb) {
+      const localVerb = verbs.find(v => 
+        v.verb.toLowerCase() === verb.toLowerCase() ||
+        v.past.toLowerCase() === verb.toLowerCase() ||
+        v.participle.toLowerCase() === verb.toLowerCase()
+      );
+      if (localVerb) {
+        return {
+          base: localVerb.verb,
+          past: localVerb.past,
+          participle: localVerb.participle,
+          meaning: localVerb.meaning,
+          hindi: localVerb.hindi,
+          assamese: localVerb.assamese
+        };
+      }
+      const fetchedVerb = fetchedVerbs.find(v => 
+        v.verb.toLowerCase() === verb.toLowerCase() ||
+        v.past.toLowerCase() === verb.toLowerCase() ||
+        v.participle.toLowerCase() === verb.toLowerCase()
+      );
+      if (fetchedVerb) {
+        return {
+          base: fetchedVerb.verb,
+          past: fetchedVerb.past,
+          participle: fetchedVerb.participle,
+          meaning: fetchedVerb.meaning,
+          hindi: fetchedVerb.hindi,
+          assamese: fetchedVerb.assamese
+        };
+      }
+      const base = verb.toLowerCase();
+      const past = base.endsWith('e') ? `${base}d` : `${base}ed`;
+      return { base, past, participle: past, meaning: null, hindi: null, assamese: null };
+    }
+
+    // Get meaning for a specific form
+    function getFormMeaning(verbData, form, language) {
+      if (form.includes('/')) return `Multiple forms (e.g., ${form})`; // Handle cases like "was/were"
+      if (language === 'en' || language === 'en-hi' || language === 'en-as') {
+        return verbData.meaning || `<a href="https://www.google.com/search?q=${encodeURIComponent(form + ' meaning')}" target="_blank" class="text-green-600 hover:text-green-700">Look up Meaning</a>`;
+      } else if (language === 'en-hi' && verbData.hindi) {
+        return verbData.hindi;
+      } else if (language === 'en-as' && verbData.assamese) {
+        return verbData.assamese;
+      }
+      if (language === 'en-hi') {
+        return `<a href="https://translate.google.co.in/?text=${encodeURIComponent(form)}&sl=en&tl=hi" target="_blank" class="text-green-600 hover:text-green-700">Translate to Hindi</a>`;
+      } else if (language === 'en-as') {
+        return `<a href="https://translate.google.co.in/?text=${encodeURIComponent(form)}&sl=en&tl=as" target="_blank" class="text-green-600 hover:text-green-700">Translate to Assamese</a>`;
+      }
+      return 'No meaning available';
+    }
+
+    // Render verb details
+    function renderVerbDetails() {
+      if (!verb) {
+        document.getElementById('verb-title').textContent = 'No Verb Selected';
+        document.getElementById('verb-meaning').textContent = 'Please select a verb from the main page.';
+        document.querySelector('.space-y-4').innerHTML = '';
+        document.getElementById('speak-all').style.display = 'none';
+        document.getElementById('form-speed').style.display = 'none';
+        return;
+      }
+
+      const verbData = getVerbForms(verb);
+      document.getElementById('verb-title').textContent = verbData.base || verb;
+
+      // Verb Meaning
+      let meaningContent = '';
+      if (currentLanguage !== 'en-only') {
+        if (verbData.meaning && (currentLanguage === 'en' || currentLanguage === 'en-hi' || currentLanguage === 'en-as')) {
+          meaningContent += `<p><strong>English:</strong> ${verbData.meaning}</p>`;
+        } else if (currentLanguage === 'en' || currentLanguage === 'en-hi' || currentLanguage === 'en-as') {
+          meaningContent += `<p><strong>English:</strong> <a href="https://www.google.com/search?q=${encodeURIComponent(verbData.base + ' meaning')}" target="_blank" class="text-green-600 hover:text-green-700">Look up Meaning</a></p>`;
+        }
+        if ((currentLanguage === 'en' || currentLanguage === 'en-hi') && verbData.hindi) {
+          meaningContent += `<p><strong>Hindi:</strong> ${verbData.hindi}</p>`;
+        } else if (currentLanguage === 'en' || currentLanguage === 'en-hi') {
+          meaningContent += `<p><strong>Hindi:</strong> <a href="https://translate.google.co.in/?text=${encodeURIComponent(verbData.base)}&sl=en&tl=hi" target="_blank" class="text-green-600 hover:text-green-700">Translate to Hindi</a></p>`;
+        }
+        if ((currentLanguage === 'en' || currentLanguage === 'en-as') && verbData.assamese) {
+          meaningContent += `<p><strong>Assamese:</strong> ${verbData.assamese}</p>`;
+        } else if (currentLanguage === 'en' || currentLanguage === 'en-as') {
+          meaningContent += `<p><strong>Assamese:</strong> <a href="https://translate.google.co.in/?text=${encodeURIComponent(verbData.base)}&sl=en&tl=as" target="_blank" class="text-green-600 hover:text-green-700">Translate to Assamese</a></p>`;
+        }
+      }
+      document.getElementById('verb-meaning').innerHTML = meaningContent || '<p>No meaning available for this language setting.</p>';
+
+      // Verb Forms
+      const forms = [
+        { id: 'present-form', label: 'Present', value: verbData.base, form: verbData.base },
+        { id: 'past-form', label: 'Past', value: verbData.past, form: verbData.past },
+        { id: 'participle-form', label: 'Participle', value: verbData.participle, form: verbData.participle }
+      ];
+      forms.forEach(form => {
+        const element = document.getElementById(form.id);
+        const meaning = currentLanguage !== 'en-only' ? getFormMeaning(verbData, form.form, currentLanguage) : '';
+        element.innerHTML = `
+          <div class="flex-1">
+            <p class="font-medium">${form.label}: ${form.value}</p>
+            ${currentLanguage !== 'en-only' ? `<p class="text-sm">${meaning}</p>` : ''}
+          </div>
+          <div>
+            <button onclick="speakForm('${form.value}')" class="bg-blue-600 text-white px-2 py-1 rounded-md text-sm hover:bg-blue-700">Listen</button>
+          </div>
+        `;
+      });
+
+      // Speak All Button
+      document.getElementById('speak-all').onclick = () => {
+        const speed = parseFloat(document.getElementById('form-speed').value);
+        speakAllForms(verbData.base, verbData.past, verbData.participle, speed);
+      };
+    }
+
+    // Text-to-Speech
+    function speakForm(text) {
+      const speed = parseFloat(document.getElementById('form-speed').value);
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = speed;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function speakAllForms(present, past, participle, speed) {
+      const forms = [present, past, participle].filter(form => form);
+      let index = 0;
+      function speakNext() {
+        if (index < forms.length) {
+          const utterance = new SpeechSynthesisUtterance(forms[index]);
+          utterance.lang = 'en-US';
+          utterance.rate = speed;
+          utterance.onend = () => {
+            index++;
+            speakNext();
+          };
+          window.speechSynthesis.speak(utterance);
+        }
+      }
+      speakNext();
+    }
+
+    function speakCustom() {
+      const text = document.getElementById('custom-text').value.trim();
+      const speed = parseFloat(document.getElementById('speech-speed').value);
+      const errorElement = document.getElementById('custom-error');
+      if (!text) {
+        errorElement.textContent = 'Please enter text to speak';
+        errorElement.classList.remove('hidden');
+        setTimeout(() => errorElement.classList.add('hidden'), 3000);
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = speed;
+      window.speechSynthesis.speak(utterance);
+      // Do not clear the input field
+    }
+
+    // Initial Render
+    try {
+      renderVerbDetails();
+    } catch (error) {
+      console.error('Error rendering verb details:', error);
+      document.getElementById('verb-title').textContent = 'Error';
+      document.getElementById('verb-meaning').textContent = 'An error occurred while loading verb details. Please try again.';
+      document.querySelector('.space-y-4').innerHTML = '';
+      document.getElementById('speak-all').style.display = 'none';
+      document.getElementById('form-speed').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verb Dictionary</title>
   <link rel="manifest" href="manifest.json">
+  <script src="verbs.js"></script>
   <style>
     /* General Styles */
     body {
@@ -258,10 +259,17 @@
       border-bottom: 1px solid #ddd;
       border-radius: 5px;
       background-color: #fafafa;
+      cursor: pointer;
     }
     body.dark .section-item {
       border-bottom: 1px solid #666;
       background-color: #333;
+    }
+    .section-item:hover {
+      background-color: #e0e0e0;
+    }
+    body.dark .section-item:hover {
+      background-color: #444;
     }
     .section-item span {
       display: flex;
@@ -314,7 +322,7 @@
     body.dark button.search-toggle {
       background-color: #4a90e2;
     }
-    body.dark button.search-toggle:hover {
+    body.dar k button.search-toggle:hover {
       background-color: #357abd;
     }
     .table-container {
@@ -345,6 +353,13 @@
     }
     tr:nth-child(even) {
       background-color: #f9f9f9;
+    }
+    tr.clickable:hover {
+      background-color: #e0e0e0;
+      cursor: pointer;
+    }
+    body.dark tr.clickable:hover {
+      background-color: #444;
     }
     .action-btn {
       cursor: pointer;
@@ -658,289 +673,7 @@
     <footer>© All rights reserved Saheb Ali</footer>
   </div>
   <script>
-    // Unified Verb Data
-    const verbs = [
-
-  { verb: "arise", past: "arose", participle: "arisen", meaning: "to come up", hindi: "उठना", assamese: "উঠা" },
-  { verb: "arrive", past: "arrived", participle: "arrived", meaning: "to reach a place", hindi: "पहुंचना", assamese: "উপস্থিত হোৱা" },
-  { verb: "ask", past: "asked", participle: "asked", meaning: "to inquire", hindi: "पूछना", assamese: "সোধা" },
-  { verb: "attend", past: "attended", participle: "attended", meaning: "to be present", hindi: "उपस्थित होना", assamese: "উপস্থিত থকা" },
-  { verb: "avoid", past: "avoided", participle: "avoided", meaning: "to keep away from", hindi: "बचना", assamese: "এৰাই চলা" },
-    { verb: "accept", past: "accepted", participle: "accepted", meaning: "to take or receive", hindi: "स्वीकार करना", assamese: "গ্ৰহণ কৰা" },
-  { verb: "add", past: "added", participle: "added", meaning: "to join or combine", hindi: "जोड़ना", assamese: "যোগ কৰা" },
-  { verb: "afford", past: "afforded", participle: "afforded", meaning: "to have enough money", hindi: "खरीद सकना", assamese: "কিনিব পৰা" },
-  { verb: "agree", past: "agreed", participle: "agreed", meaning: "to consent", hindi: "सहमत होना", assamese: "সন্মত হোৱা" },
-  { verb: "allow", past: "allowed", participle: "allowed", meaning: "to permit", hindi: "अनुमति देना", assamese: "অনুমতি দিয়া" },
-  { verb: "announce", past: "announced", participle: "announced", meaning: "to make known", hindi: "घोषणा करना", assamese: "ঘোষণা কৰা" },
-  { verb: "answer", past: "answered", participle: "answered", meaning: "to reply", hindi: "उत्तर देना", assamese: "উত্তৰ দিয়া" },
-  { verb: "appear", past: "appeared", participle: "appeared", meaning: "to become visible", hindi: "प्रकट होना", assamese: "দেখা দিয়া" },
-  { verb: "approach", past: "approached", participle: "approached", meaning: "to come near", hindi: "पास आना", assamese: "কাষলৈ আহা" },
-  { verb: "argue", past: "argued", participle: "argued", meaning: "to dispute", hindi: "तर्क करना", assamese: "বিতৰ্ক কৰা" },
-  { verb: "arrest", past: "arrested", participle: "arrested", meaning: "to seize", hindi: "गिरफ्तार करना", assamese: "গ্ৰেপ্তাৰ কৰা" },
-  { verb: "awake", past: "awoke", participle: "awakened", meaning: "to wake up", hindi: "जागना", assamese: "জাগা" },
-  { verb: "bake", past: "baked", participle: "baked", meaning: "to cook in an oven", hindi: "पकाना", assamese: "ভাজা" },
-  { verb: "bang", past: "banged", participle: "banged", meaning: "to hit sharply", hindi: "धमाका करना", assamese: "আঘাত কৰা" },
-  { verb: "be", past: "was/were", participle: "been", meaning: "to exist", hindi: "होना", assamese: "হোৱা" },
-  { verb: "bear", past: "bore", participle: "borne", meaning: "to carry", hindi: "वहन करना", assamese: "বহন কৰা" },
-  { verb: "beat", past: "beat", participle: "beaten", meaning: "to strike", hindi: "मारना", assamese: "পিটা" },
-  { verb: "become", past: "became", participle: "become", meaning: "to grow to be", hindi: "बनना", assamese: "হোৱা" },
-  { verb: "beg", past: "begged", participle: "begged", meaning: "to request earnestly", hindi: "भीख मांगना", assamese: "ভিক্ষা কৰা" },
-  { verb: "begin", past: "began", participle: "begun", meaning: "to start", hindi: "शुरू करना", assamese: "আৰম্ভ কৰা" },
-  { verb: "behave", past: "behaved", participle: "behaved", meaning: "to act properly", hindi: "व्यवहार करना", assamese: "আচৰণ কৰা" },
-  { verb: "believe", past: "believed", participle: "believed", meaning: "to accept as true", hindi: "विश्वास करना", assamese: "বিশ্বাস কৰা" },
-  { verb: "bend", past: "bent", participle: "bent", meaning: "to curve", hindi: "मोड़ना", assamese: "বেঁকা" },
-  { verb: "bind", past: "bound", participle: "bound", meaning: "to tie", hindi: "बांधना", assamese: "বান্ধা" },
-  { verb: "bite", past: "bit", participle: "bitten", meaning: "to cut with teeth", hindi: "काटना", assamese: "কামোৰা" },
-  { verb: "blow", past: "blew", participle: "blown", meaning: "to move air", hindi: "फूंकना", assamese: "ফু দিয়া" },
-  { verb: "boil", past: "boiled", participle: "boiled", meaning: "to heat to bubbling", hindi: "उबालना", assamese: "উতলোৱা" },
-  { verb: "book", past: "booked", participle: "booked", meaning: "to reserve", hindi: "बुक करना", assamese: "বুক কৰা" },
-  { verb: "borrow", past: "borrowed", participle: "borrowed", meaning: "to take temporarily", hindi: "उधार लेना", assamese: "ধাৰ লোৱা" },
-  { verb: "bounce", past: "bounced", participle: "bounced", meaning: "to rebound", hindi: "उछालना", assamese: "বাউন্স কৰা" },
-  { verb: "break", past: "broke", participle: "broken", meaning: "to smash", hindi: "तोड़ना", assamese: "ভাঙা" },
-  { verb: "bring", past: "brought", participle: "brought", meaning: "to carry along", hindi: "लाना", assamese: "আনা" },
-  { verb: "broadcast", past: "broadcast", participle: "broadcast", meaning: "to transmit", hindi: "प्रसारण करना", assamese: "প্ৰচাৰ কৰা" },
-  { verb: "brush", past: "brushed", participle: "brushed", meaning: "to sweep", hindi: "ब्रश करना", assamese: "ব্ৰাছ কৰা" },
-  { verb: "build", past: "built", participle: "built", meaning: "to construct", hindi: "बनाना", assamese: "নিৰ্মাণ কৰা" },
-  { verb: "burn", past: "burnt", participle: "burnt", meaning: "to set on fire", hindi: "जलाना", assamese: "জ্বলোৱা" },
-  { verb: "burst", past: "burst", participle: "burst", meaning: "to break open", hindi: "फटना", assamese: "ফাটা" },
-  { verb: "buy", past: "bought", participle: "bought", meaning: "to purchase", hindi: "खरीदना", assamese: "কিনা" },
-  { verb: "call", past: "called", participle: "called", meaning: "to summon", hindi: "बुलाना", assamese: "মাতা" },
-  { verb: "can", past: "could", participle: "could", meaning: "to be able", hindi: "सकना", assamese: "পাৰা" },
-  { verb: "care", past: "cared", participle: "cared", meaning: "to be concerned", hindi: "परवाह करना", assamese: "যত্ন লোৱা" },
-  { verb: "carry", past: "carried", participle: "carried", meaning: "to transport", hindi: "ले जाना", assamese: "বহন কৰা" },
-  { verb: "catch", past: "caught", participle: "caught", meaning: "to capture", hindi: "पकड़ना", assamese: "ধৰা" },
-  { verb: "cause", past: "caused", participle: "caused", meaning: "to bring about", hindi: "कारण बनना", assamese: "কাৰণ হোৱা" },
-  { verb: "change", past: "changed", participle: "changed", meaning: "to alter", hindi: "बदलना", assamese: "সলনি কৰা" },
-  { verb: "chase", past: "chased", participle: "chased", meaning: "to pursue", hindi: "पीछा करना", assamese: "খেদা" },
-  { verb: "check", past: "checked", participle: "checked", meaning: "to examine", hindi: "जांच करना", assamese: "পৰীক্ষা কৰা" },
-  { verb: "chew", past: "chewed", participle: "chewed", meaning: "to bite repeatedly", hindi: "चबाना", assamese: "চোবোৱা" },
-  { verb: "choose", past: "chose", participle: "chosen", meaning: "to select", hindi: "चुनना", assamese: "বাছি লোৱা" },
-  { verb: "clap", past: "clapped", participle: "clapped", meaning: "to strike hands together", hindi: "ताली बजाना", assamese: "হাতচাপৰি দিয়া" },
-  { verb: "clean", past: "cleaned", participle: "cleaned", meaning: "to make tidy", hindi: "साफ करना", assamese: "পৰিষ্কাৰ কৰা" },
-  { verb: "climb", past: "climbed", participle: "climbed", meaning: "to ascend", hindi: "चढ़ना", assamese: "উঠা" },
-  { verb: "close", past: "closed", participle: "closed", meaning: "to shut", hindi: "बंद करना", assamese: "বন্ধ কৰা" },
-  { verb: "collect", past: "collected", participle: "collected", meaning: "to gather", hindi: "इकट्ठा करना", assamese: "সংগ্ৰহ কৰা" },
-  { verb: "colour", past: "coloured", participle: "coloured", meaning: "to add color", hindi: "रंग करना", assamese: "ৰং কৰা" },
-  { verb: "come", past: "came", participle: "come", meaning: "to approach", hindi: "आना", assamese: "আহা" },
-  { verb: "command", past: "commanded", participle: "commanded", meaning: "to order", hindi: "आदेश देना", assamese: "আদেশ দিয়া" },
-  { verb: "complain", past: "complained", participle: "complained", meaning: "to express dissatisfaction", hindi: "शिकायत करना", assamese: "অভিযোগ কৰা" },
-  { verb: "connect", past: "connected", participle: "connected", meaning: "to join", hindi: "जोड़ना", assamese: "সংযোগ কৰা" },
-  { verb: "copy", past: "copied", participle: "copied", meaning: "to duplicate", hindi: "नकल करना", assamese: "নকল কৰা" },
-  { verb: "cost", past: "cost", participle: "cost", meaning: "to require payment", hindi: "मूल्य होना", assamese: "মূল্য হোৱা" },
-  { verb: "count", past: "counted", participle: "counted", meaning: "to calculate", hindi: "गिनना", assamese: "গণনা কৰা" },
-  { verb: "cover", past: "covered", participle: "covered", meaning: "to place over", hindi: "ढकना", assamese: "ঢাকা" },
-  { verb: "crash", past: "crashed", participle: "crashed", meaning: "to collide", hindi: "टकराना", assamese: "সংঘৰ্ষ হোৱা" },
-  { verb: "cross", past: "crossed", participle: "crossed", meaning: "to go across", hindi: "पार करना", assamese: "পাৰ হোৱা" },
-  { verb: "cry", past: "cried", participle: "cried", meaning: "to shed tears", hindi: "रोना", assamese: "কান্দা" },
-  { verb: "curl", past: "curled", participle: "curled", meaning: "to twist into coils", hindi: "लपेटना", assamese: "কুণ্ডলী কৰা" },
-  { verb: "cut", past: "cut", participle: "cut", meaning: "to divide with a sharp tool", hindi: "काटना", assamese: "কটা" },
-  { verb: "dance", past: "danced", participle: "danced", meaning: "to move rhythmically", hindi: "नाचना", assamese: "নৃত্য কৰা" },
-  { verb: "decide", past: "decided", participle: "decided", meaning: "to make a choice", hindi: "निर्णय करना", assamese: "সিদ্ধান্ত লোৱা" },
-  { verb: "decorate", past: "decorated", participle: "decorated", meaning: "to adorn", hindi: "सजाना", assamese: "সজোৱা" },
-  { verb: "delay", past: "delayed", participle: "delayed", meaning: "to postpone", hindi: "देरी करना", assamese: "বিলম্ব কৰা" },
-  { verb: "deliver", past: "delivered", participle: "delivered", meaning: "to hand over", hindi: "पहुंचाना", assamese: "বিতৰণ কৰা" },
-  { verb: "depend", past: "depended", participle: "depended", meaning: "to rely", hindi: "निर्भर करना", assamese: "নিৰ্ভৰ কৰা" },
-  { verb: "describe", past: "described", participle: "described", meaning: "to explain", hindi: "वर्णन करना", assamese: "বৰ্ণনা কৰা" },
-  { verb: "design", past: "designed", participle: "designed", meaning: "to plan", hindi: "डिज़ाइन करना", assamese: "ডিজাইন কৰা" },
-  { verb: "destroy", past: "destroyed", participle: "destroyed", meaning: "to ruin", hindi: "नष्ट करना", assamese: "ধ্বংস কৰা" },
-  { verb: "die", past: "died", participle: "died", meaning: "to pass away", hindi: "मरना", assamese: "মৰা" },
-  { verb: "dig", past: "dug", participle: "dug", meaning: "to break up earth", hindi: "खोदना", assamese: "খন্দা" },
-  { verb: "divide", past: "divided", participle: "divided", meaning: "to separate", hindi: "विभाजित करना", assamese: "ভাগ কৰা" },
-  { verb: "do", past: "did", participle: "done", meaning: "to perform", hindi: "करना", assamese: "কৰা" },
-  { verb: "draw", past: "drew", participle: "drawn", meaning: "to sketch", hindi: "खींचना", assamese: "আঁকা" },
-  { verb: "dream", past: "dreamt/dreamed", participle: "dreamt/dreamed", meaning: "to imagine", hindi: "सपना देखना", assamese: "সপোন দেখা" },
-  { verb: "drink", past: "drank", participle: "drunk", meaning: "to consume liquid", hindi: "पीना", assamese: "পান কৰা" },
-  { verb: "drive", past: "drove", participle: "driven", meaning: "to operate a vehicle", hindi: "चलाना", assamese: "চলোৱা" },
-  { verb: "drop", past: "dropped", participle: "dropped", meaning: "to let fall", hindi: "गिराना", assamese: "পেলোৱা" },
-  { verb: "eat", past: "ate", participle: "eaten", meaning: "to consume food", hindi: "खाना", assamese: "খোৱা" },
-  { verb: "encourage", past: "encouraged", participle: "encouraged", meaning: "to inspire", hindi: "प्रोत्साहित करना", assamese: "উৎসাহিত কৰা" },
-  { verb: "end", past: "ended", participle: "ended", meaning: "to finish", hindi: "समाप्त करना", assamese: "শেষ কৰা" },
-  { verb: "enjoy", past: "enjoyed", participle: "enjoyed", meaning: "to take pleasure in", hindi: "आनंद लेना", assamese: "উপভোগ কৰা" },
-  { verb: "enter", past: "entered", participle: "entered", meaning: "to go in", hindi: "प्रवेश करना", assamese: "প্ৰৱেশ কৰা" },
-  { verb: "escape", past: "escaped", participle: "escaped", meaning: "to get away", hindi: "भागना", assamese: "পলোৱা" },
-  { verb: "estimate", past: "estimated", participle: "estimated", meaning: "to approximate", hindi: "अनुमान लगाना", assamese: "অনুমান কৰা" },
-  { verb: "examine", past: "examined", participle: "examined", meaning: "to inspect", hindi: "जांच करना", assamese: "পৰীক্ষা কৰা" },
-  { verb: "exist", past: "existed", participle: "existed", meaning: "to be present", hindi: "अस्तित्व में होना", assamese: "অস্তিত্ব থকা" },
-  { verb: "explain", past: "explained", participle: "explained", meaning: "to clarify", hindi: "समझाना", assamese: "বুজাই দিয়া" },
-  { verb: "face", past: "faced", participle: "faced", meaning: "to confront", hindi: "सामना करना", assamese: "মুখামুখি হোৱা" },
-  { verb: "fail", past: "failed", participle: "failed", meaning: "to not succeed", hindi: "असफल होना", assamese: "ব্যৰ্থ হোৱা" },
-  { verb: "fall", past: "fell", participle: "fallen", meaning: "to drop down", hindi: "गिरना", assamese: "পৰা" },
-  { verb: "fasten", past: "fastened", participle: "fastened", meaning: "to secure", hindi: "बांधना", assamese: "বান্ধা" },
-  { verb: "feed", past: "fed", participle: "fed", meaning: "to give food", hindi: "खिलाना", assamese: "খুৱোৱা" },
-  { verb: "feel", past: "felt", participle: "felt", meaning: "to sense", hindi: "महसूस करना", assamese: "অনুভৱ কৰা" },
-  { verb: "fetch", past: "fetched", participle: "fetched", meaning: "to retrieve", hindi: "लाना", assamese: "আনা" },
-  { verb: "fight", past: "fought", participle: "fought", meaning: "to struggle", hindi: "लड़ना", assamese: "যুঁজা" },
-  { verb: "fill", past: "filled", participle: "filled", meaning: "to make full", hindi: "भरना", assamese: "ভৰোৱা" },
-  { verb: "find", past: "found", participle: "found", meaning: "to discover", hindi: "खोजना", assamese: "বিচাৰি উলিওৱা" },
-  { verb: "finish", past: "finished", participle: "finished", meaning: "to complete", hindi: "समाप्त करना", assamese: "শেষ কৰা" },
-  { verb: "fix", past: "fixed", participle: "fixed", meaning: "to repair", hindi: "ठीक करना", assamese: "মেৰামতি কৰা" },
-  { verb: "flee", past: "fled", participle: "fled", meaning: "to run away", hindi: "भागना", assamese: "পলোৱা" },
-  { verb: "fly", past: "flew", participle: "flown", meaning: "to travel through air", hindi: "उड़ना", assamese: "উৰা" },
-  { verb: "fold", past: "folded", participle: "folded", meaning: "to bend over", hindi: "मोड़ना", assamese: "ভাঁজ কৰা" },
-  { verb: "force", past: "forced", participle: "forced", meaning: "to compel", hindi: "मजबूर करना", assamese: "বাধ্য কৰা" },
-  { verb: "forget", past: "forgot", participle: "forgotten", meaning: "to not remember", hindi: "भूलना", assamese: "পাহৰা" },
-  { verb: "forgive", past: "forgave", participle: "forgiven", meaning: "to pardon", hindi: "माफ करना", assamese: "ক্ষমা কৰা" },
-  { verb: "freeze", past: "froze", participle: "frozen", meaning: "to solidify by cold", hindi: "जमना", assamese: "জমা" },
-  { verb: "fry", past: "fried", participle: "fried", meaning: "to cook in oil", hindi: "तलना", assamese: "ভাজা" },
-  { verb: "gain", past: "gained", participle: "gained", meaning: "to acquire", hindi: "प्राप्त करना", assamese: "লাভ কৰা" },
-  { verb: "get", past: "got", participle: "got", meaning: "to obtain", hindi: "प्राप्त करना", assamese: "পোৱা" },
-  { verb: "give", past: "gave", participle: "given", meaning: "to present", hindi: "देना", assamese: "দিয়া" },
-  { verb: "go", past: "went", participle: "gone", meaning: "to move", hindi: "जाना", assamese: "যোৱা" },
-  { verb: "grind", past: "ground", participle: "ground", meaning: "to crush into powder", hindi: "पीसना", assamese: "পিহা" },
-  { verb: "grow", past: "grew", participle: "grown", meaning: "to increase", hindi: "बढ़ना", assamese: "বৃদ্ধি পোৱা" },
-  { verb: "guess", past: "guessed", participle: "guessed", meaning: "to estimate", hindi: "अनुमान लगाना", assamese: "অনুমান কৰা" },
-  { verb: "handle", past: "handled", participle: "handled", meaning: "to manage", hindi: "संभालना", assamese: "চম্ভালা" },
-  { verb: "hang", past: "hung", participle: "hung", meaning: "to suspend", hindi: "लटकाना", assamese: "ঝুলোৱা" },
-  { verb: "hate", past: "hated", participle: "hated", meaning: "to dislike intensely", hindi: "नफरत करना", assamese: "ঘৃণা কৰা" },
-  { verb: "have", past: "had", participle: "had", meaning: "to possess", hindi: "रखना", assamese: "থকা" },
-  { verb: "hear", past: "heard", participle: "heard", meaning: "to perceive sound", hindi: "सुनना", assamese: "শুনা" },
-  { verb: "heat", past: "heated", participle: "heated", meaning: "to make hot", hindi: "गर्म करना", assamese: "গৰম কৰা" },
-  { verb: "help", past: "helped", participle: "helped", meaning: "to assist", hindi: "मदद करना", assamese: "সহায় কৰা" },
-  { verb: "hide", past: "hid", participle: "hidden", meaning: "to conceal", hindi: "छिपाना", assamese: "লুকোৱা" },
-  { verb: "hit", past: "hit", participle: "hit", meaning: "to strike", hindi: "मारना", assamese: "আঘাত কৰা" },
-  { verb: "hold", past: "held", participle: "held", meaning: "to grasp", hindi: "पकड़ना", assamese: "ধৰা" },
-  { verb: "hook", past: "hooked", participle: "hooked", meaning: "to catch", hindi: "हुक करना", assamese: "হুকত আৰি ধৰা" },
-  { verb: "hope", past: "hoped", participle: "hoped", meaning: "to wish", hindi: "आशा करना", assamese: "আশা কৰা" },
-  { verb: "hug", past: "hugged", participle: "hugged", meaning: "to embrace", hindi: "गले लगाना", assamese: "আলিংগন কৰা" },
-  { verb: "hurt", past: "hurt", participle: "hurt", meaning: "to injure", hindi: "चोट पहुँचाना", assamese: "আঘাত কৰা" },
-  { verb: "identify", past: "identified", participle: "identified", meaning: "to recognize", hindi: "पहचानना", assamese: "চিনাক্ত কৰা" },
-  { verb: "imagine", past: "imagined", participle: "imagined", meaning: "to form a mental image", hindi: "कल्पना करना", assamese: "কল্পনা কৰা" },
-  { verb: "impress", past: "impressed", participle: "impressed", meaning: "to affect strongly", hindi: "प्रभावित करना", assamese: "প্ৰভাৱিত কৰা" },
-  { verb: "improve", past: "improved", participle: "improved", meaning: "to make better", hindi: "सुधार करना", assamese: "উন্নত কৰা" },
-  { verb: "include", past: "included", participle: "included", meaning: "to contain", hindi: "शामिल करना", assamese: "অন্তৰ্ভুক্ত কৰা" },
-  { verb: "increase", past: "increased", participle: "increased", meaning: "to make larger", hindi: "बढ़ाना", assamese: "বৃদ্ধি কৰা" },
-  { verb: "influence", past: "influenced", participle: "influenced", meaning: "to affect", hindi: "प्रभाव डालना", assamese: "প্ৰভাৱ পেলোৱা" },
-  { verb: "injure", past: "injured", participle: "injured", meaning: "to harm", hindi: "चोट पहुंचाना", assamese: "আঘাত কৰা" },
-  { verb: "interrupt", past: "interrupted", participle: "interrupted", meaning: "to break in", hindi: "बाधित करना", assamese: "বাধা দিয়া" },
-  { verb: "introduce", past: "introduced", participle: "introduced", meaning: "to present", hindi: "परिचय कराना", assamese: "পৰিচয় কৰোৱা" },
-  { verb: "invite", past: "invited", participle: "invited", meaning: "to request attendance", hindi: "निमंत्रण देना", assamese: "আমন্ত্ৰণ জনোৱা" },
-  { verb: "iron", past: "ironed", participle: "ironed", meaning: "to press clothes", hindi: "इस्त्री करना", assamese: "ইস্তৰী কৰা" },
-  { verb: "itch", past: "itched", participle: "itched", meaning: "to feel irritation", hindi: "खुजली होना", assamese: "খজুৱতি হোৱা" },
-  { verb: "joke", past: "joked", participle: "joked", meaning: "to tell something funny", hindi: "मजाक करना", assamese: "মজা কৰা" },
-  { verb: "join", past: "joined", participle: "joined", meaning: "to connect", hindi: "जुड़ना", assamese: "যোগদান কৰা" },
-  { verb: "judge", past: "judged", participle: "judged", meaning: "to evaluate", hindi: "निर्णय करना", assamese: "বিচাৰ কৰা" },
-  { verb: "jump", past: "jumped", participle: "jumped", meaning: "to leap", hindi: "कूदना", assamese: "জাঁপ দিয়া" },
-  { verb: "keep", past: "kept", participle: "kept", meaning: "to retain", hindi: "रखना", assamese: "ৰাখা" },
-  { verb: "kick", past: "kicked", participle: "kicked", meaning: "to strike with foot", hindi: "लात मारना", assamese: "লাথি মাৰা" },
-  { verb: "kill", past: "killed", participle: "killed", meaning: "to cause death", hindi: "मारना", assamese: "হত্যা কৰা" },
-  { verb: "kneel", past: "knelt", participle: "knelt", meaning: "to bend knees", hindi: "घुटने टेकना", assamese: "আঁঠুৱা কঢ়া" },
-  { verb: "knit", past: "knitted", participle: "knitted", meaning: "to make fabric", hindi: "बुनना", assamese: "বোৱা" },
-  { verb: "know", past: "knew", participle: "known", meaning: "to understand", hindi: "जानना", assamese: "জনা" },
-  { verb: "label", past: "labeled", participle: "labeled", meaning: "to tag", hindi: "लेबल करना", assamese: "লেবেল কৰা" },
-  { verb: "land", past: "landed", participle: "landed", meaning: "to arrive on ground", hindi: "उतरना", assamese: "অৱতৰণ কৰা" },
-  { verb: "last", past: "lasted", participle: "lasted", meaning: "to continue", hindi: "चलना", assamese: "চলা" },
-  { verb: "laugh", past: "laughed", participle: "laughed", meaning: "to express amusement", hindi: "हंसना", assamese: "হাঁহা" },
-  { verb: "lay", past: "laid", participle: "laid", meaning: "to place", hindi: "रखना", assamese: "থোৱা" },
-  { verb: "learn", past: "learnt", participle: "learnt", meaning: "to gain knowledge", hindi: "सीखना", assamese: "শিকা" },
-  { verb: "leave", past: "left", participle: "left", meaning: "to depart", hindi: "छोड़ना", assamese: "এৰা" },
-  { verb: "lend", past: "lent", participle: "lent", meaning: "to give temporarily", hindi: "उधार देना", assamese: "ধাৰ দিয়া" },
-  { verb: "let", past: "let", participle: "let", meaning: "to allow", hindi: "अनुमति देना", assamese: "অনুমতি দিয়া" },
-  { verb: "lie", past: "lay", participle: "lain", meaning: "to recline", hindi: "लेटना", assamese: "শুই থকা" },
-  { verb: "light", past: "lit", participle: "lit", meaning: "to illuminate", hindi: "जलाना", assamese: "জ্বলোৱা" },
-  { verb: "like", past: "liked", participle: "liked", meaning: "to enjoy", hindi: "पसंद करना", assamese: "পছন্দ কৰা" },
-  { verb: "listen", past: "listened", participle: "listened", meaning: "to hear attentively", hindi: "सुनना", assamese: "শুনা" },
-  { verb: "live", past: "lived", participle: "lived", meaning: "to reside", hindi: "रहना", assamese: "বাস কৰা" },
-  { verb: "load", past: "loaded", participle: "loaded", meaning: "to fill", hindi: "लादना", assamese: "ভৰোৱা" },
-  { verb: "lock", past: "locked", participle: "locked", meaning: "to secure", hindi: "ताला लगाना", assamese: "তলা লগোৱা" },
-  { verb: "look", past: "looked", participle: "looked", meaning: "to see", hindi: "देखना", assamese: "চোৱা" },
-  { verb: "lose", past: "lost", participle: "lost", meaning: "to misplace", hindi: "खोना", assamese: "হেৰুৱা" },
-  { verb: "love", past: "loved", participle: "loved", meaning: "to feel affection", hindi: "प्यार करना", assamese: "প্ৰেম কৰা" },
-  { verb: "make", past: "made", participle: "made", meaning: "to create", hindi: "बनाना", assamese: "নিৰ্মাণ কৰা" },
-  { verb: "manage", past: "managed", participle: "managed", meaning: "to control", hindi: "प्रबंध करना", assamese: "পৰিচালনা কৰা" },
-  { verb: "mark", past: "marked", participle: "marked", meaning: "to label", hindi: "चिह्नित करना", assamese: "চিহ্নিত কৰা" },
-  { verb: "match", past: "matched", participle: "matched", meaning: "to pair", hindi: "मिलान करना", assamese: "মিলোৱা" },
-  { verb: "mean", past: "meant", participle: "meant", meaning: "to intend", hindi: "अभिप्राय करना", assamese: "অৰ্থ কৰা" },
-  { verb: "measure", past: "measured", participle: "measured", meaning: "to determine size", hindi: "नापना", assamese: "জোখা" },
-  { verb: "meet", past: "met", participle: "met", meaning: "to encounter", hindi: "मिलना", assamese: "সাক্ষাৎ কৰা" },
-  { verb: "mend", past: "mended", participle: "mended", meaning: "to repair", hindi: "मरम्मत करना", assamese: "মেৰামতি কৰা" },
-  { verb: "miss", past: "missed", participle: "missed", meaning: "to fail to hit", hindi: "चूकना", assamese: "চুকা" },
-  { verb: "mix", past: "mixed", participle: "mixed", meaning: "to combine", hindi: "मिलाना", assamese: "মিশ্ৰণ কৰা" },
-  { verb: "move", past: "moved", participle: "moved", meaning: "to change position", hindi: "हिलना", assamese: "চলা" },
-  { verb: "name", past: "named", participle: "named", meaning: "to give a name", hindi: "नाम देना", assamese: "নাম দিয়া" },
-  { verb: "need", past: "needed", participle: "needed", meaning: "to require", hindi: "ज़रूरत होना", assamese: "প্ৰয়োজন হোৱা" },
-  { verb: "notice", past: "noticed", participle: "noticed", meaning: "to observe", hindi: "ध्यान देना", assamese: "লক্ষ্য কৰা" },
-  { verb: "obey", past: "obeyed", participle: "obeyed", meaning: "to follow orders", hindi: "पालन करना", assamese: "মানি চলা" },
-  { verb: "occur", past: "occurred", participle: "occurred", meaning: "to happen", hindi: "घटना", assamese: "ঘটনা" },
-  { verb: "open", past: "opened", participle: "opened", meaning: "to unfasten", hindi: "खोलना", assamese: "খোলা" },
-  { verb: "order", past: "ordered", participle: "ordered", meaning: "to command", hindi: "आदेश देना", assamese: "আদেশ দিয়া" },
-  { verb: "pack", past: "packed", participle: "packed", meaning: "to put in a container", hindi: "पैक करना", assamese: "পেক কৰা" },
-  { verb: "paint", past: "painted", participle: "painted", meaning: "to apply color", hindi: "पेंट करना", assamese: "ৰং কৰা" },
-  { verb: "park", past: "parked", participle: "parked", meaning: "to place a vehicle", hindi: "पार्क करना", assamese: "পাৰ্ক কৰা" },
-  { verb: "participate", past: "participated", participle: "participated", meaning: "to take part", hindi: "भाग लेना", assamese: "অংশগ্ৰহণ কৰা" },
-  { verb: "pass", past: "passed", participle: "passed", meaning: "to go by", hindi: "पास करना", assamese: "পাৰ হোৱা" },
-  { verb: "pay", past: "paid", participle: "paid", meaning: "to give money", hindi: "भुगतान करना", assamese: "পৰিশোধ কৰা" },
-  { verb: "plan", past: "planned", participle: "planned", meaning: "to organize", hindi: "योजना बनाना", assamese: "পৰিকল্পনা কৰা" },
-  { verb: "play", past: "played", participle: "played", meaning: "to engage in activity", hindi: "खेलना", assamese: "খেলা" },
-  { verb: "prefer", past: "preferred", participle: "preferred", meaning: "to like better", hindi: "प्राथमिकता देना", assamese: "পছন্দ কৰা" },
-  { verb: "pull", past: "pulled", participle: "pulled", meaning: "to tug", hindi: "खींचना", assamese: "টানা" },
-  { verb: "push", past: "pushed", participle: "pushed", meaning: "to press against", hindi: "धक्का देना", assamese: "ঠেলা" },
-  { verb: "put", past: "put", participle: "put", meaning: "to place", hindi: "रखना", assamese: "থোৱা" },
-  { verb: "rain", past: "rained", participle: "rained", meaning: "to fall as water", hindi: "बारिश होना", assamese: "বৰষুণ হোৱা" },
-  { verb: "reach", past: "reached", participle: "reached", meaning: "to arrive at", hindi: "पहुंचना", assamese: "উপনীত হোৱা" },
-  { verb: "read", past: "read", participle: "read", meaning: "to interpret text", hindi: "पढ़ना", assamese: "পঢ়া" },
-  { verb: "reply", past: "replied", participle: "replied", meaning: "to answer", hindi: "जवाब देना", assamese: "উত্তৰ দিয়া" },
-  { verb: "return", past: "returned", participle: "returned", meaning: "to go back", hindi: "वापस करना", assamese: "ঘূৰি আহা" },
-  { verb: "ride", past: "rode", participle: "ridden", meaning: "to travel on", hindi: "सवारी करना", assamese: "চঢ়া" },
-  { verb: "ring", past: "rang", participle: "rung", meaning: "to sound a bell", hindi: "बजाना", assamese: "বজোৱা" },
-  { verb: "rise", past: "rose", participle: "risen", meaning: "to go up", hindi: "उठना", assamese: "উঠা" },
-  { verb: "run", past: "ran", participle: "run", meaning: "to move quickly", hindi: "दौड़ना", assamese: "দৌৰা" },
-  { verb: "say", past: "said", participle: "said", meaning: "to speak", hindi: "कहना", assamese: "কোৱা" },
-  { verb: "see", past: "saw", participle: "seen", meaning: "to observe", hindi: "देखना", assamese: "চোৱা" },
-  { verb: "seek", past: "sought", participle: "sought", meaning: "to search for", hindi: "खोजना", assamese: "বিচাৰা" },
-  { verb: "sell", past: "sold", participle: "sold", meaning: "to exchange for money", hindi: "बेचना", assamese: "বিক্ৰী কৰা" },
-  { verb: "send", past: "sent", participle: "sent", meaning: "to dispatch", hindi: "भेजना", assamese: "পঠিওৱা" },
-  { verb: "shake", past: "shook", participle: "shaken", meaning: "to vibrate", hindi: "हिलाना", assamese: "কঁপোৱা" },
-  { verb: "shoot", past: "shot", participle: "shot", meaning: "to fire", hindi: "गोली मारना", assamese: "গুলী চলোৱা" },
-  { verb: "show", past: "showed", participle: "shown", meaning: "to display", hindi: "दिखाना", assamese: "দেখুৱা" },
-  { verb: "shout", past: "shouted", participle: "shouted", meaning: "to yell", hindi: "चिल्लाना", assamese: "চিঞৰা" },
-  { verb: "shut", past: "shut", participle: "shut", meaning: "to close", hindi: "बंद करना", assamese: "বন্ধ কৰা" },
-  { verb: "sing", past: "sang", participle: "sung", meaning: "to produce music vocally", hindi: "गाना", assamese: "গান গোৱা" },
-  { verb: "sink", past: "sank", participle: "sunk", meaning: "to go under", hindi: "डूबना", assamese: "ডুবা" },
-  { verb: "sit", past: "sat", participle: "sat", meaning: "to rest on a seat", hindi: "बैठना", assamese: "বহা" },
-  { verb: "sleep", past: "slept", participle: "slept", meaning: "to rest by sleeping", hindi: "सोना", assamese: "শোৱা" },
-  { verb: "smell", past: "smelt", participle: "smelt", meaning: "to perceive odor", hindi: "सूंघना", assamese: "শুঙা" },
-  { verb: "speak", past: "spoke", participle: "spoken", meaning: "to talk", hindi: "बोलना", assamese: "কথা কোৱা" },
-  { verb: "spell", past: "spelt", participle: "spelt", meaning: "to write correctly", hindi: "वर्तनी करना", assamese: "বানান কৰা" },
-  { verb: "spend", past: "spent", participle: "spent", meaning: "to use up", hindi: "खर्च करना", assamese: "খৰচ কৰা" },
-  { verb: "spill", past: "spilt", participle: "spilt", meaning: "to cause to flow out", hindi: "छलकाना", assamese: "ঢলা" },
-  { verb: "split", past: "split", participle: "split", meaning: "to divide", hindi: "विभाजित करना", assamese: "ভাগ কৰা" },
-  { verb: "spread", past: "spread", participle: "spread", meaning: "to extend", hindi: "फैलाना", assamese: "বিয়পোৱা" },
-  { verb: "stand", past: "stood", participle: "stood", meaning: "to be upright", hindi: "खड़ा होना", assamese: "থিয় হোৱা" },
-  { verb: "steal", past: "stole", participle: "stolen", meaning: "to take unlawfully", hindi: "चुराना", assamese: "চুৰি কৰা" },
-  { verb: "stick", past: "stuck", participle: "stuck", meaning: "to adhere", hindi: "चिपकाना", assamese: "আঠা লগোৱা" },
-  { verb: "sting", past: "stung", participle: "stung", meaning: "to prick painfully", hindi: "डंक मारना", assamese: "হুল ফুৰা" },
-  { verb: "swear", past: "swore", participle: "sworn", meaning: "to make an oath", hindi: "शपथ लेना", assamese: "শপত খোৱা" },
-  { verb: "sweep", past: "swept", participle: "swept", meaning: "to clean with a broom", hindi: "झाड़ू लगाना", assamese: "ঝাড়ু দিয়া" },
-  { verb: "swell", past: "swelled", participle: "swollen", meaning: "to increase in size", hindi: "सूजना", assamese: "ফুলা" },
-  { verb: "swim", past: "swam", participle: "swum", meaning: "to move in water", hindi: "तैरना", assamese: "সাঁতোৱা" },
-  { verb: "swing", past: "swung", participle: "swung", meaning: "to move back and forth", hindi: "झूलना", assamese: "দোল খোৱা" },
-  { verb: "take", past: "took", participle: "taken", meaning: "to seize", hindi: "लेना", assamese: "লোৱা" },
-  { verb: "teach", past: "taught", participle: "taught", meaning: "to instruct", hindi: "सिखाना", assamese: "শিকোৱা" },
-  { verb: "tear", past: "tore", participle: "torn", meaning: "to rip", hindi: "फाड़ना", assamese: "ফালা" },
-  { verb: "tell", past: "told", participle: "told", meaning: "to inform", hindi: "बताना", assamese: "কোৱা" },
-  { verb: "think", past: "thought", participle: "thought", meaning: "to consider", hindi: "सोचना", assamese: "ভাবা" },
-  { verb: "throw", past: "threw", participle: "thrown", meaning: "to propel", hindi: "फेंकना", assamese: "নিক্ষেপ কৰা" },
-  { verb: "travel", past: "traveled", participle: "traveled", meaning: "to journey", hindi: "यात्रा करना", assamese: "ভ্ৰমণ কৰা" },
-  { verb: "try", past: "tried", participle: "tried", meaning: "to attempt", hindi: "कोशिश करना", assamese: "চেষ্টা কৰা" },
-  { verb: "turn", past: "turned", participle: "turned", meaning: "to rotate", hindi: "मुड़ना", assamese: "ঘূৰা" },
-  { verb: "understand", past: "understood", participle: "understood", meaning: "to comprehend", hindi: "समझना", assamese: "বুজা" },
-  { verb: "undertake", past: "undertook", participle: "undertaken", meaning: "to commit to", hindi: "उठाना", assamese: "গ্ৰহণ কৰা" },
-  { verb: "wait", past: "waited", participle: "waited", meaning: "to stay in expectation", hindi: "इंतजार करना", assamese: "অপেক্ষা কৰা" },
-  { verb: "wake", past: "woke", participle: "woken", meaning: "to become alert", hindi: "जागना", assamese: "জাগা" },
-  { verb: "walk", past: "walked", participle: "walked", meaning: "to move on foot", hindi: "चलना", assamese: "খোজ কঢ়া" },
-  { verb: "wash", past: "washed", participle: "washed", meaning: "to clean", hindi: "धोना", assamese: "ধোৱা" },
-  { verb: "watch", past: "watched", participle: "watched", meaning: "to observe", hindi: "देखना", assamese: "চোৱা" },
-  { verb: "wear", past: "wore", participle: "worn", meaning: "to have on the body", hindi: "पहनना", assamese: "পিন্ধা" },
-  { verb: "weep", past: "wept", participle: "wept", meaning: "to cry", hindi: "रोना", assamese: "কান্দা" },
-  { verb: "wet", past: "wet", participle: "wet", meaning: "to make damp", hindi: "गीला करना", assamese: "ভিজোৱা" },
-  { verb: "win", past: "won", participle: "won", meaning: "to succeed", hindi: "जीतना", assamese: "জয়ী হোৱা" },
-  { verb: "wish", past: "wished", participle: "wished", meaning: "to desire", hindi: "इच्छा करना", assamese: "ইচ্ছা কৰা" },
-  { verb: "work", past: "worked", participle: "worked", meaning: "to labor", hindi: "काम करना", assamese: "কাম কৰা" },
-  { verb: "worry", past: "worried", participle: "worried", meaning: "to feel anxious", hindi: "चिंता करना", assamese: "চিন্তা কৰা" },
-  { verb: "write", past: "wrote", participle: "written", meaning: "to compose", hindi: "लिखना", assamese: "লিখা" },
-  { verb: "yell", past: "yelled", participle: "yelled", meaning: "to shout loudly", hindi: "चिल्लाना", assamese: "চিঞৰা" }
-]
- // Initialize localStorage
+    // Initialize localStorage
     let starredVerbs = JSON.parse(localStorage.getItem('starredVerbs')) || [];
     let savedVerbs = JSON.parse(localStorage.getItem('savedVerbs')) || [];
     let fetchedVerbs = JSON.parse(localStorage.getItem('fetchedVerbs')) || [];
@@ -981,7 +714,6 @@
 
     // Get verb forms
     function getVerbForms(verb) {
-      // Check local verbs first
       const localVerb = verbs.find(v => 
         v.verb.toLowerCase() === verb.toLowerCase() ||
         v.past.toLowerCase() === verb.toLowerCase() ||
@@ -991,10 +723,12 @@
         return {
           base: localVerb.verb,
           past: localVerb.past,
-          participle: localVerb.participle
+          participle: localVerb.participle,
+          meaning: localVerb.meaning,
+          hindi: localVerb.hindi,
+          assamese: localVerb.assamese
         };
       }
-      // Check fetched verbs
       const fetchedVerb = fetchedVerbs.find(v => 
         v.verb.toLowerCase() === verb.toLowerCase() ||
         v.past.toLowerCase() === verb.toLowerCase() ||
@@ -1004,13 +738,15 @@
         return {
           base: fetchedVerb.verb,
           past: fetchedVerb.past,
-          participle: fetchedVerb.participle
+          participle: fetchedVerb.participle,
+          meaning: fetchedVerb.meaning,
+          hindi: fetchedVerb.hindi,
+          assamese: fetchedVerb.assamese
         };
       }
-      // Regular verb rule (for saving new verbs or temporary display)
       const base = verb.toLowerCase();
       const past = base.endsWith('e') ? `${base}d` : `${base}ed`;
-      return { base, past, participle: past };
+      return { base, past, participle: past, meaning: null, hindi: null, assamese: null };
     }
 
     // Fetch verb from DictionaryAPI.dev (for saving only)
@@ -1087,6 +823,11 @@
       renderTables();
     }
 
+    // Navigate to Verb Detail Page
+    function goToVerbDetail(verb) {
+      window.location.href = `verb-detail.html?verb=${encodeURIComponent(verb)}&language=${currentLanguage}&theme=${currentTheme}`;
+    }
+
     // Render Tables
     function renderTables() {
       renderVerbsTable();
@@ -1146,24 +887,27 @@
         const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
 
         const row = document.createElement('tr');
+        row.className = 'clickable';
+        row.onclick = () => goToVerbDetail(v.verb);
         row.innerHTML = `
           <td>${v.verb}</td>
           <td class="meaning-col">${meaningContent}</td>
           <td class="hindi-col">${hindiContent}</td>
           <td class="assamese-col">${assameseContent}</td>
-          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
-          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
         const item = document.createElement('div');
         item.className = 'section-item';
+        item.onclick = () => goToVerbDetail(v.verb);
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
           ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
-          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
-          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+          <span><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></span>
         `;
         sectionContent.appendChild(item);
       });
@@ -1197,6 +941,7 @@
           tbody.appendChild(row);
           const item = document.createElement('div');
           item.className = 'section-item';
+          item.onclick = () => goToVerbDetail(search);
           item.innerHTML = `
             <span><strong>Verb:</strong> ${search}</span>
             <span><a class="translate-btn" href="https://www.google.com/search?q=${encodeURIComponent(search + ' present past participle verb form')}" target="_blank">Look up Verb Forms</a></span>
@@ -1215,22 +960,25 @@
 
       displayVerbs.forEach(v => {
         const row = document.createElement('tr');
+        row.className = 'clickable';
+        row.onclick = () => goToVerbDetail(v.verb);
         row.innerHTML = `
-          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</td>
-          <td><span class="action-btn" onclick="speak('${v.past}')">🔊</span>${v.past}</td>
-          <td><span class="action-btn" onclick="speak('${v.participle}')">🔊</span>${v.participle}</td>
-          <td><span class="action-btn" onclick="speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊</span></td>
-          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span>${v.verb}</td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.past}')">🔊</span>${v.past}</td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.participle}')">🔊</span>${v.participle}</td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
         const item = document.createElement('div');
         item.className = 'section-item';
+        item.onclick = () => goToVerbDetail(v.verb);
         item.innerHTML = `
-          <span><strong>Present:</strong> <span class="action-btn" onclick="speak('${v.verb}')">🔊</span>${v.verb}</span>
-          <span><strong>Past:</strong> <span class="action-btn" onclick="speak('${v.past}')">🔊</span>${v.past}</span>
-          <span><strong>Participle:</strong> <span class="action-btn" onclick="speak('${v.participle}')">🔊</span>${v.participle}</span>
-          <span><span class="action-btn" onclick="speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊 All</span></span>
-          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+          <span><strong>Present:</strong> <span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span>${v.verb}</span>
+          <span><strong>Past:</strong> <span class="action-btn" onclick="event.stopPropagation(); speak('${v.past}')">🔊</span>${v.past}</span>
+          <span><strong>Participle:</strong> <span class="action-btn" onclick="event.stopPropagation(); speak('${v.participle}')">🔊</span>${v.participle}</span>
+          <span><span class="action-btn" onclick="event.stopPropagation(); speakAllForms('${v.verb}', '${v.past}', '${v.participle}')">🔊 All</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></span>
         `;
         sectionContent.appendChild(item);
       });
@@ -1268,24 +1016,27 @@
         const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
 
         const row = document.createElement('tr');
+        row.className = 'clickable';
+        row.onclick = () => goToVerbDetail(v.verb);
         row.innerHTML = `
           <td>${v.verb}</td>
           <td class="meaning-col">${meaningContent}</td>
           <td class="hindi-col">${hindiContent}</td>
           <td class="assamese-col">${assameseContent}</td>
-          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
-          <td><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn starred" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
         const item = document.createElement('div');
         item.className = 'section-item';
+        item.onclick = () => goToVerbDetail(v.verb);
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
           ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
-          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
-          <span><span class="action-btn starred" onclick="toggleStar('${v.verb}')">★</span></span>
+          <span><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn starred" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></span>
         `;
         sectionContent.appendChild(item);
       });
@@ -1323,24 +1074,27 @@
         const assameseContent = hasAssamese ? v.assamese : `<a class="translate-btn" href="https://translate.google.co.in/?text=${encodeURIComponent(v.verb)}&sl=en&tl=as" target="_blank">Translate to Assamese</a>`;
 
         const row = document.createElement('tr');
+        row.className = 'clickable';
+        row.onclick = () => goToVerbDetail(v.verb);
         row.innerHTML = `
           <td>${v.verb}</td>
           <td class="meaning-col">${meaningContent}</td>
           <td class="hindi-col">${hindiContent}</td>
           <td class="assamese-col">${assameseContent}</td>
-          <td><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></td>
-          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></td>
+          <td><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></td>
+          <td><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></td>
         `;
         tbody.appendChild(row);
         const item = document.createElement('div');
         item.className = 'section-item';
+        item.onclick = () => goToVerbDetail(v.verb);
         item.innerHTML = `
           <span><strong>Verb:</strong> ${v.verb}</span>
           ${currentLanguage === 'en-only' ? '' : `<span><strong>Meaning:</strong> ${meaningContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-as' ? '' : `<span><strong>Hindi:</strong> ${hindiContent}</span>`}
           ${currentLanguage === 'en-only' || currentLanguage === 'en-hi' ? '' : `<span><strong>Assamese:</strong> ${assameseContent}</span>`}
-          <span><span class="action-btn" onclick="speak('${v.verb}')">🔊</span></span>
-          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="toggleStar('${v.verb}')">★</span></span>
+          <span><span class="action-btn" onclick="event.stopPropagation(); speak('${v.verb}')">🔊</span></span>
+          <span><span class="action-btn ${starredVerbs.includes(v.verb) ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar('${v.verb}')">★</span></span>
         `;
         sectionContent.appendChild(item);
       });
@@ -1490,6 +1244,6 @@
     // Initial Render
     renderTables();
   </script>
-  <script src="sw.js"></script>
+   <script src="sw.js"></script>
 </body>
 </html>
