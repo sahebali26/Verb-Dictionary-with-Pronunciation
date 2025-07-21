@@ -42,6 +42,28 @@
     body.dark .hover\:bg-green-700:hover {
       background-color: #27ae60;
     }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 15px;
+      background-color: #f4f4f9;
+      color: #333;
+      font-size: 0.9em;
+      border-radius: 0;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    h4 {
+      text-align: center;
+      color: #357abd;
+    }
+     
+     footer {
+        font-size: 0.85em;
+        padding: 5px;
+      }
     .animate-fade-in {
       animation: fadeIn 0.5s ease-in-out;
     }
@@ -109,10 +131,17 @@
       <a href="index.html" class="bg-blue-600 text-white px-2 py-2 rounded-md hover:bg-blue-700">Back to Home</a>
     </div>
 
-    <footer class="fixed bottom-0 w-full text-center py-4 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-sm">
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
+<h4>We are gled to help you</h4>
+  </div>
+
+    <footer>
       © All rights reserved Saheb Ali
     </footer>
   </div>
+
+
+
 
   <script>
     // Initialize localStorage
