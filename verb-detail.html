@@ -59,6 +59,7 @@
       text-align: center;
       color: #357abd;
     }
+
      
      footer {
         font-size: 0.85em;
@@ -70,6 +71,50 @@
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Swipe navigation styles */
+    .swipe-container {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .swipe-content {
+      display: flex;
+      transition: transform 0.3s ease;
+      width: 100%;
+    }
+    .swipe-page {
+      min-width: 100%;
+      padding: 0 15px;
+      box-sizing: border-box;
+    }
+    .swipe-nav {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+   
+
+    .swipe-nav button {
+  padding: 2px 4px;
+  background-color: #fffffff3;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+
+
+    body.dark .swipe-nav button {
+      background-color: #c1cbd6;
+    }
+    .swipe-nav button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -89,59 +134,79 @@
       </div>
     </header>
 
-    <!-- Verb Details -->
-    <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
-      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Verb Details</h2>
-      <div id="verb-meaning" class="mb-4 text-sm md:text-base"></div>
-      <h3 class="text-md md:text-lg font-semibold text-gray-800 mb-2">Verb Forms</h3>
-      <div class="flex justify-center mb-4">
-        <select id="form-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
-          <option value="0.5">Slow (0.5x)</option>
-          <option value="1.0" selected>Normal (1x)</option>
-          <option value="1.5">Fast (1.5x)</option>
-        </select>
-      </div>
-      <div class="space-y-4">
-        <div id="present-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
-        <div id="past-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
-        <div id="participle-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
-      </div>
-      <div class="flex justify-center gap-4 mt-6">
-        <button id="speak-all" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Speak All Forms</button>
+    <!-- Verb Details with Swipe Navigation -->
+    <div class="swipe-container" id="swipe-container">
+      <div class="swipe-content" id="swipe-content">
+        <div class="swipe-page">
+
+
+                  <!-- Navigation Buttons -->
+    <div class="swipe-nav">
+      <button id="prev-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Previous Verb</button>
+      <button id="next-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Next Verb</button>
+    </div>
+          <!-- Verb Details -->
+          <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
+            <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Verb Details</h2>
+            <div id="verb-meaning" class="mb-4 text-sm md:text-base"></div>
+            <h3 class="text-md md:text-lg font-semibold text-gray-800 mb-2">Verb Forms</h3>
+           
+            <div class="flex justify-center mb-4">
+              <select id="form-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
+                <option value="0.5">Slow (0.5x)</option>
+                <option value="1.0" selected>Normal (1x)</option>
+                <option value="1.5">Fast (1.5x)</option>
+              </select>
+            </div>
+            <div class="space-y-4">
+              <div id="present-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+              <div id="past-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+              <div id="participle-form" class="flex flex-col md:flex-row md:items-center gap-2 bg-gray-100 p-4 rounded-md border border-gray-200"></div>
+            </div>
+            <div class="flex justify-center gap-4 mt-6">
+              <button id="speak-all" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Speak All Forms</button>
+            </div>
+          </div>
+
+
+
+  
+
+
+    
+          <!-- Write and Listen -->
+          <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
+            <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Write and Listen</h2>
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+              <input type="text" id="custom-text" placeholder="Enter text or verb to listen..." class="w-full md:w-1/2 p-2 border border-gray-200 rounded-md text-sm">
+              <select id="speech-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
+                <option value="0.5">Slow (0.5x)</option>
+                <option value="1.0" selected>Normal (1x)</option>
+                <option value="1.5">Fast (1.5x)</option>
+              </select>
+              <button onclick="speakCustom()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Speak</button>
+            </div>
+            <div id="custom-error" class="text-red-500 text-sm mt-2 hidden"></div>
+          </div>
+
+          <!-- Back Button -->
+          <div class="mt-6 flex justify-center">
+            <a href="index.html" class="bg-blue-600 text-white px-2 py-2 rounded-md hover:bg-blue-700">Back to Home</a>
+          </div>
+
+          <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
+            <h4>We are glad to help you</h4>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Write and Listen -->
-    <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
-      <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Write and Listen</h2>
-      <div class="flex flex-col md:flex-row gap-4 items-center">
-        <input type="text" id="custom-text" placeholder="Enter text or verb to listen..." class="w-full md:w-1/2 p-2 border border-gray-200 rounded-md text-sm">
-        <select id="speech-speed" class="p-2 rounded-md bg-white text-gray-800 text-sm cursor-pointer hover:bg-gray-200">
-          <option value="0.5">Slow (0.5x)</option>
-          <option value="1.0" selected>Normal (1x)</option>
-          <option value="1.5">Fast (1.5x)</option>
-        </select>
-        <button onclick="speakCustom()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">Speak</button>
-      </div>
-      <div id="custom-error" class="text-red-500 text-sm mt-2 hidden"></div>
-    </div>
-
-    <!-- Back Button -->
-    <div class="mt-6 flex justify-center">
-      <a href="index.html" class="bg-blue-600 text-white px-2 py-2 rounded-md hover:bg-blue-700">Back to Home</a>
-    </div>
-
-    <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
-<h4>We are gled to help you</h4>
-  </div>
+    
 
     <footer>
       © All rights reserved Saheb Ali
     </footer>
   </div>
-
-
-
 
   <script>
     // Initialize localStorage
@@ -226,6 +291,113 @@
         return `<a href="https://translate.google.co.in/?text=${encodeURIComponent(form)}&sl=en&tl=as" target="_blank" class="text-green-600 hover:text-green-700">Translate to Assamese</a>`;
       }
       return 'No meaning available';
+    }
+
+    // Get current verb index
+    function getCurrentVerbIndex() {
+      const allVerbs = [...verbs, ...fetchedVerbs];
+      const currentVerb = getVerbForms(verb).base.toLowerCase();
+      return allVerbs.findIndex(v => v.verb.toLowerCase() === currentVerb);
+    }
+
+    // Navigate to next/previous verb
+    function navigateVerb(direction) {
+      const allVerbs = [...verbs, ...fetchedVerbs];
+      const currentIndex = getCurrentVerbIndex();
+      let newIndex = currentIndex + direction;
+      
+      // Wrap around if at beginning or end
+      if (newIndex < 0) newIndex = allVerbs.length - 1;
+      if (newIndex >= allVerbs.length) newIndex = 0;
+      
+      if (allVerbs[newIndex]) {
+        window.location.href = `verb-detail.html?verb=${encodeURIComponent(allVerbs[newIndex].verb)}&language=${currentLanguage}&theme=${currentTheme}`;
+      }
+    }
+
+    // Set up swipe navigation
+    function setupSwipeNavigation() {
+      const swipeContainer = document.getElementById('swipe-container');
+      const swipeContent = document.getElementById('swipe-content');
+      let startX = 0;
+      let isSwiping = false;
+
+      // Touch events for mobile
+      swipeContainer.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        isSwiping = true;
+      });
+
+      swipeContainer.addEventListener('touchmove', (e) => {
+        if (!isSwiping) return;
+        e.preventDefault();
+        const currentX = e.touches[0].clientX;
+        const diff = currentX - startX;
+        swipeContent.style.transform = `translateX(${diff}px)`;
+      });
+
+      swipeContainer.addEventListener('touchend', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const endX = e.changedTouches[0].clientX;
+        const diff = endX - startX;
+        swipeContent.style.transform = 'translateX(0)';
+        
+        // Determine if swipe was significant enough to change verb
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            // Swiped right - previous verb
+            navigateVerb(-1);
+          } else {
+            // Swiped left - next verb
+            navigateVerb(1);
+          }
+        }
+      });
+
+      // Mouse events for desktop
+      swipeContainer.addEventListener('mousedown', (e) => {
+        startX = e.clientX;
+        isSwiping = true;
+      });
+
+      swipeContainer.addEventListener('mousemove', (e) => {
+        if (!isSwiping) return;
+        e.preventDefault();
+        const currentX = e.clientX;
+        const diff = currentX - startX;
+        swipeContent.style.transform = `translateX(${diff}px)`;
+      });
+
+      swipeContainer.addEventListener('mouseup', (e) => {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const endX = e.clientX;
+        const diff = endX - startX;
+        swipeContent.style.transform = 'translateX(0)';
+        
+        // Determine if swipe was significant enough to change verb
+        if (Math.abs(diff) > 50) {
+          if (diff > 0) {
+            // Swiped right - previous verb
+            navigateVerb(-1);
+          } else {
+            // Swiped left - next verb
+            navigateVerb(1);
+          }
+        }
+      });
+
+      swipeContainer.addEventListener('mouseleave', () => {
+        if (isSwiping) {
+          isSwiping = false;
+          swipeContent.style.transform = 'translateX(0)';
+        }
+      });
+
+      // Button navigation
+      document.getElementById('prev-verb').addEventListener('click', () => navigateVerb(-1));
+      document.getElementById('next-verb').addEventListener('click', () => navigateVerb(1));
     }
 
     // Render verb details
@@ -337,6 +509,7 @@
     // Initial Render
     try {
       renderVerbDetails();
+      setupSwipeNavigation();
     } catch (error) {
       console.error('Error rendering verb details:', error);
       document.getElementById('verb-title').textContent = 'Error';
