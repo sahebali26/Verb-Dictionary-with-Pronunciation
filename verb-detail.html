@@ -74,22 +74,6 @@
     }
     
     /* Swipe navigation styles */
-    .swipe-container {
-      position: relative;
-      width: 100%;
-      overflow: hidden;
-      touch-action: none;
-    }
-    .swipe-content {
-      display: flex;
-      transition: transform 0.3s ease;
-      width: 100%;
-    }
-    .swipe-page {
-      min-width: 100%;
-      padding: 0 15px;
-      box-sizing: border-box;
-    }
     .swipe-nav {
       display: flex;
       justify-content: space-between;
@@ -109,7 +93,7 @@
 
 
 
-    body.dark .swipe-nav button {
+     body.dark .swipe-nav button {
       background-color: #c1cbd6;
     }
     .swipe-nav button:disabled {
@@ -134,17 +118,17 @@
       </div>
     </header>
 
-    <!-- Verb Details with Swipe Navigation -->
-    <div class="swipe-container" id="swipe-container">
-      <div class="swipe-content" id="swipe-content">
-        <div class="swipe-page">
+    <!-- Verb Details -->
+    <div>
+      <div>
+        <div>
 
-
-                  <!-- Navigation Buttons -->
-    <div class="swipe-nav">
-      <button id="prev-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Previous Verb</button>
-      <button id="next-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Next Verb</button>
-    </div>
+          <!-- Navigation Buttons -->
+          <div class="swipe-nav">
+            <button id="prev-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Previous Verb</button>
+            <button id="next-verb" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Next Verb</button>
+          </div>
+          
           <!-- Verb Details -->
           <div class="bg-white p-6 rounded-lg shadow-md animate-fade-in">
             <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Verb Details</h2>
@@ -168,12 +152,6 @@
             </div>
           </div>
 
-
-
-  
-
-
-    
           <!-- Write and Listen -->
           <div class="bg-white p-6 rounded-lg shadow-md mt-6 animate-fade-in">
             <h2 class="text-lg md:text-xl font-semibold text-gray-800 mb-4">Write and Listen</h2>
@@ -200,8 +178,6 @@
         </div>
       </div>
     </div>
-
-    
 
     <footer>
       © All rights reserved Saheb Ali
@@ -315,87 +291,8 @@
       }
     }
 
-    // Set up swipe navigation
-    function setupSwipeNavigation() {
-      const swipeContainer = document.getElementById('swipe-container');
-      const swipeContent = document.getElementById('swipe-content');
-      let startX = 0;
-      let isSwiping = false;
-
-      // Touch events for mobile
-      swipeContainer.addEventListener('touchstart', (e) => {
-        startX = e.touches[0].clientX;
-        isSwiping = true;
-      });
-
-      swipeContainer.addEventListener('touchmove', (e) => {
-        if (!isSwiping) return;
-        e.preventDefault();
-        const currentX = e.touches[0].clientX;
-        const diff = currentX - startX;
-        swipeContent.style.transform = `translateX(${diff}px)`;
-      });
-
-      swipeContainer.addEventListener('touchend', (e) => {
-        if (!isSwiping) return;
-        isSwiping = false;
-        const endX = e.changedTouches[0].clientX;
-        const diff = endX - startX;
-        swipeContent.style.transform = 'translateX(0)';
-        
-        // Determine if swipe was significant enough to change verb
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) {
-            // Swiped right - previous verb
-            navigateVerb(-1);
-          } else {
-            // Swiped left - next verb
-            navigateVerb(1);
-          }
-        }
-      });
-
-      // Mouse events for desktop
-      swipeContainer.addEventListener('mousedown', (e) => {
-        startX = e.clientX;
-        isSwiping = true;
-      });
-
-      swipeContainer.addEventListener('mousemove', (e) => {
-        if (!isSwiping) return;
-        e.preventDefault();
-        const currentX = e.clientX;
-        const diff = currentX - startX;
-        swipeContent.style.transform = `translateX(${diff}px)`;
-      });
-
-      swipeContainer.addEventListener('mouseup', (e) => {
-        if (!isSwiping) return;
-        isSwiping = false;
-        const endX = e.clientX;
-        const diff = endX - startX;
-        swipeContent.style.transform = 'translateX(0)';
-        
-        // Determine if swipe was significant enough to change verb
-        if (Math.abs(diff) > 50) {
-          if (diff > 0) {
-            // Swiped right - previous verb
-            navigateVerb(-1);
-          } else {
-            // Swiped left - next verb
-            navigateVerb(1);
-          }
-        }
-      });
-
-      swipeContainer.addEventListener('mouseleave', () => {
-        if (isSwiping) {
-          isSwiping = false;
-          swipeContent.style.transform = 'translateX(0)';
-        }
-      });
-
-      // Button navigation
+    // Set up button navigation
+    function setupNavigation() {
       document.getElementById('prev-verb').addEventListener('click', () => navigateVerb(-1));
       document.getElementById('next-verb').addEventListener('click', () => navigateVerb(1));
     }
@@ -509,7 +406,7 @@
     // Initial Render
     try {
       renderVerbDetails();
-      setupSwipeNavigation();
+      setupNavigation();
     } catch (error) {
       console.error('Error rendering verb details:', error);
       document.getElementById('verb-title').textContent = 'Error';
